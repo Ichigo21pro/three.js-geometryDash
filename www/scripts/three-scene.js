@@ -1,17 +1,21 @@
 // three.js
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 // physics
-import { AmmoPhysics, ExtendedMesh, PhysicsLoader } from '@enable3d/ammo-physics';
+import {
+  AmmoPhysics,
+  ExtendedMesh,
+  PhysicsLoader,
+} from "@enable3d/ammo-physics";
 
 // CSG
-import { CSG } from '@enable3d/three-graphics/jsm/csg';
+import { CSG } from "@enable3d/three-graphics/jsm/csg";
 
 // Flat
-import { TextTexture, TextSprite } from '@enable3d/three-graphics/jsm/flat';
+import { TextTexture, TextSprite } from "@enable3d/three-graphics/jsm/flat";
 
-console.log('Three.js version r' + THREE.REVISION);
+console.log("Three.js version r" + THREE.REVISION);
 
 const MainScene = () => {
   // sizes
@@ -57,9 +61,11 @@ const MainScene = () => {
   // extract the object factory from physics
   // the factory will make/add object without physics
   const { factory } = physics;
-
   // blue box
-  physics.add.box({ x: 0.05, y: 10 }, { lambert: { color: 0x2194ce } });
+  const cube = physics.add.box(
+    { x: 0.05, y: 10 },
+    { lambert: { color: 0x2194ce } }
+  );
 
   // static ground
   physics.add.ground({ width: 20, height: 20 });
@@ -69,38 +75,8 @@ const MainScene = () => {
   // first parameter is the config for the geometry
   // second parameter is for the material
   // you could also add a custom material like so { custom: new THREE.MeshLambertMaterial({ color: 0x00ff00 }) }
-  const greenSphere = factory.add.sphere({ y: 2, z: 5 }, { lambert: { color: 0x00ff00 } });
+
   // once the object is created, you can add physics to it
-  physics.add.existing(greenSphere);
-
-  // green box
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshLambertMaterial({ color: 0x00ff00 });
-  const cube = new ExtendedMesh(geometry, material);
-  cube.position.set(0, 5, 0);
-  scene.add(cube);
-  physics.add.existing(cube);
-  cube.body.setCollisionFlags(2); // make it kinematic
-
-  // merge children to compound shape
-  const exclamationMark = () => {
-    const material = new THREE.MeshLambertMaterial({ color: 0xffff00 });
-
-    const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.25), material);
-    sphere.position.set(0, -0.8, 0);
-
-    const cube = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.8, 0.4), material);
-    cube.position.set(5, 2, 5);
-
-    cube.add(sphere);
-    scene.add(cube);
-
-    cube.position.set(5, 5, 5);
-    cube.rotation.set(0, 0.4, 0.2);
-
-    physics.add.existing(cube);
-  };
-  exclamationMark();
 
   // 2d camera/2d scene for UI
   const scene2d = new THREE.Scene();
@@ -108,28 +84,102 @@ const MainScene = () => {
   camera2d.position.setZ(10);
 
   // add 2d text in UI
-  const text = new TextTexture('some 2d text', {
-    fontWeight: 'bold',
+  const text = new TextTexture("Score : ", {
+    fontWeight: "bold",
     fontSize: 48,
   });
   const sprite = new TextSprite(text);
   const scale = 0.5;
   sprite.setScale(scale);
-  sprite.setPosition(0 + (text.width * scale) / 2 + 12, height - (text.height * scale) / 2 - 12);
+  sprite.setPosition(
+    0 + (text.width * scale) / 2 + 12,
+    height - (text.height * scale) / 2 - 12
+  );
   scene2d.add(sprite);
 
   // clock
   const clock = new THREE.Clock();
+  //////////////////////////////////////CONTROLS///////////////////////////////////////
+  //para detectar cuando se deja de pulasr (si no el objeto se moveria aun despues de pulsar la tecla)
+  const keys = {
+    a: { pressed: false },
+    d: { pressed: false },
+    s: { pressed: false },
+    w: { pressed: false },
+    space: { pressed: false },
+  };
+
+  //atrapamos las teclas
+  window.addEventListener("keydown", (event) => {
+    switch (event.code) {
+      case "KeyA":
+        keys.a.pressed = true;
+
+        break;
+      case "KeyD":
+        keys.d.pressed = true;
+
+        break;
+      case "KeyS":
+        keys.w.pressed = true;
+
+        break;
+      case "KeyW":
+        keys.s.pressed = true;
+
+        break;
+      case "Space":
+        // Realiza el salto.
+        cube.body.setVelocityY = 0.1;
+
+        break;
+    }
+  });
+  window.addEventListener("keyup", (event) => {
+    switch (event.code) {
+      case "KeyA":
+        keys.a.pressed = false;
+
+        break;
+      case "KeyD":
+        keys.d.pressed = false;
+
+        break;
+      case "KeyS":
+        keys.w.pressed = false;
+
+        break;
+      case "KeyW":
+        keys.s.pressed = false;
+
+        break;
+    }
+  });
+
+  ////////////////////////////////////////////////////////////////////////////////////
 
   // loop
   const animate = () => {
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-    cube.body.needUpdate = true; // this is how you update kinematic bodies
-
     physics.update(clock.getDelta() * 1000);
     physics.updateDebugger();
-
+    ///////////////////////
+    //hacer que no se mueva si no se toca nada
+    //cube.velocity.x = 0;
+    // cube.velocity.z = 0;
+    //
+    //movimiento del cubo eje x
+    if (keys.a.pressed) {
+      //  cube.velocity.x = -0.05;
+    } else if (keys.d.pressed) {
+      //  cube.velocity.x = +0.05;
+    }
+    //movimiento del cubo eje z
+    if (keys.s.pressed) {
+      //   cube.velocity.z = -0.05;
+    } else if (keys.w.pressed) {
+      //   cube.velocity.z = +0.05;
+    }
+    //////////////////////
     // you have to clear and call render twice because there are 2 scenes
     // one 3d scene and one 2d scene
     renderer.clear();
@@ -143,4 +193,4 @@ const MainScene = () => {
 };
 
 // '/ammo' is the folder where all ammo file are
-PhysicsLoader('/ammo', () => MainScene());
+PhysicsLoader("/ammo", () => MainScene());
