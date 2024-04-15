@@ -14,11 +14,30 @@ import { CSG } from "@enable3d/three-graphics/jsm/csg";
 
 // Flat
 import { TextTexture, TextSprite } from "@enable3d/three-graphics/jsm/flat";
+//bloques del nivel intanciar variable
+let groupBlock;
 
-console.log("Three.js version r" + THREE.REVISION);
+//modelos 3D
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import level_1_model from "../../assets/Level1.gltf";
 
 export default class ThreeScene {
   constructor() {
+    //cargar modelo 3D
+    // Instancia del cargador GLTFLoader
+    this.GLTFLoader = new GLTFLoader();
+    this.GLTFLoader.load(level_1_model, (gltf) => {
+      this.levelModel = gltf.scene;
+      gltf.scene.position.set(0.5, 0, 60);
+      gltf.scene.scale.set(10, 10, 10);
+      gltf.scene.rotation.set(0, Math.PI * 0.5, 0);
+      this.scene.add(gltf.scene);
+      this.physics.add.existing(gltf.scene, {
+        shape: "concaveMesh",
+        addChildren: true,
+        collisionFlags: 2,
+      });
+    });
     // sizes
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -57,7 +76,7 @@ export default class ThreeScene {
 
     // physics
     this.physics = new AmmoPhysics(this.scene);
-    this.physics.debug?.disable();
+    this.physics.debug?.enable();
 
     // you can access Ammo directly if you want
     // new Ammo.btVector3(1, 2, 3).y()
@@ -74,9 +93,8 @@ export default class ThreeScene {
     orbitControls.target = player.position;
     //bloques del nivel
     this.createLevelBlocks();
-
     // static ground
-    var grounBlock = this.physics.add.ground({ width: 3, height: 200 });
+    //var grounBlock = this.physics.add.ground({ width: 3, height: 200 });
     //limits
     var backLimmits = this.physics.add.ground(
       {
@@ -89,6 +107,7 @@ export default class ThreeScene {
       },
       { standard: { color: 0xf2a0e2 } }
     );
+    backLimmits.body.setCollisionFlags(4); // Establecer como un "fantasma" // Evitar colisiones
     var bottomLimmits = this.physics.add.ground(
       {
         x: 0.05,
@@ -171,6 +190,7 @@ export default class ThreeScene {
     player.body.on.collision((groupBlock, event) => {
       tocandoSuelo = true;
     });
+    console.log(tocandoSuelo);
 
     /*window.addEventListener("keyup", (event) => {
     switch (event.code) {
@@ -210,7 +230,7 @@ export default class ThreeScene {
       player.body.setAngularVelocityY(0);
       //movimiento fijo eje z
       //player.body.setVelocityZ(-4);
-      groupBlock.body.setVelocityz(2);
+      //groupBlock.body.setPosition(0, 0, 5);
 
       //////////////////////
       // you have to clear and call render twice because there are 2 scenes
@@ -225,578 +245,7 @@ export default class ThreeScene {
     requestAnimationFrame(animate);
   }
 
-  createLevelBlocks() {
-    //level blocks:
-    let groupBlock = new THREE.Group();
-    var block1 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 93,
-        width: 1,
-        height: 5,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block2 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: 92,
-        width: 1,
-        height: 3,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block3 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: 91,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-
-    var block4 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: 86,
-        width: 1,
-        height: 3,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block5 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: 80,
-        width: 1,
-        height: 3,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block6 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: 75,
-        width: 1,
-        height: 3,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block7 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 5,
-        z: 75,
-        width: 1,
-        height: 3,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block8 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 74,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block9 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: 67,
-        width: 1,
-        height: 7,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block10 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 64,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block11 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: 57,
-        width: 1,
-        height: 7,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block12 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: 54,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block13 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 51,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block14 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 48,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block15 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 45,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block16 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 42,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block17 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: 42,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block18 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 39,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block19 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: 39,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block20 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: 39,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block21 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: 32,
-        width: 1,
-        height: 8,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block22 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: 21,
-        width: 1,
-        height: 8,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block23 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 14,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block24 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: 14,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block25 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: 14,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block26 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: 0,
-        width: 1,
-        height: 18,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block27 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: -1.5,
-        width: 1,
-        height: 15,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block28 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: -3,
-        width: 1,
-        height: 12,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block29 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 4,
-        z: -4.5,
-        width: 1,
-        height: 9,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block30 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 5,
-        z: -6,
-        width: 1,
-        height: 6,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block31 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 6,
-        z: -7.5,
-        width: 1,
-        height: 3,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block32 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 6,
-        z: -15,
-        width: 1,
-        height: 8,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block33 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 5,
-        z: -22,
-        width: 1,
-        height: 6,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block34 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 5,
-        z: -22,
-        width: 1,
-        height: 6,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block35 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 4,
-        z: -27,
-        width: 1,
-        height: 4,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block36 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3,
-        z: -31,
-        width: 1,
-        height: 4,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block37 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: -35,
-        width: 1,
-        height: 4,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block38 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: -39,
-        width: 1,
-        height: 4,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-
-    var block39 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: -45,
-        width: 1,
-        height: 1,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block40 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 1,
-        z: -48,
-        width: 1,
-        height: 1,
-        depth: 3,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block41 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2,
-        z: -51,
-        width: 1,
-        height: 1,
-        depth: 4,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block42 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 2.5,
-        z: -54,
-        width: 1,
-        height: 1,
-        depth: 5.5,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block43 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 4,
-        z: -57,
-        width: 1,
-        height: 1,
-        depth: 7,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block44 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 5,
-        z: -63,
-        width: 1,
-        height: 5,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block45 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 5,
-        z: -71,
-        width: 1,
-        height: 5,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block46 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 5,
-        z: -79,
-        width: 1,
-        height: 5,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block47 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3.5,
-        z: -84,
-        width: 1,
-        height: 1,
-        depth: 6,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block48 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3.5,
-        z: -87,
-        width: 1,
-        height: 1,
-        depth: 6,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var block49 = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 3.5,
-        z: -90,
-        width: 1,
-        height: 1,
-        depth: 6,
-      },
-      { standard: { color: 0xdcf2a0 } }
-    );
-    var finalBlock = this.physics.add.ground(
-      {
-        x: 0.05,
-        y: 7,
-        z: -99,
-        width: 1,
-        height: 1,
-        depth: 15,
-      },
-      { standard: { color: 0xf2a0e2 } }
-    );
-
-    //añadimos al grupo
-    groupBlock.add(
-      block1,
-      block2,
-      block3,
-      block4,
-      block5,
-      block6,
-      block7,
-      block8,
-      block9,
-      block10,
-      block11,
-      block12,
-      block13,
-      block14,
-      block15,
-      block16,
-      block17,
-      block18,
-      block19,
-      block20,
-      block21,
-      block22,
-      block23,
-      block24,
-      block25,
-      block26,
-      block27,
-      block28,
-      block29,
-      block30,
-      block31,
-      block32,
-      block33,
-      block34,
-      block35,
-      block36,
-      block37,
-      block38,
-      block39,
-      block40,
-      block41,
-      block42,
-      block43,
-      block44,
-      block45,
-      block46,
-      block47,
-      block48,
-      block49,
-      finalBlock
-    );
-    this.scene.add(groupBlock);
-    return groupBlock;
-    //this.add.existing(groupBlock);
-    //this.physics.add.existing(groupBlock);
-  }
+  createLevelBlocks() {}
 }
 
 // '/ammo' is the folder where all ammo file are
