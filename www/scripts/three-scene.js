@@ -45,7 +45,7 @@ const MainScene = () => {
   var orbitControls = new OrbitControls(camera, renderer.domElement);
   orbitControls.minDistance = 10;
   orbitControls.maxDistance = 50;
-  orbitControls.enablePan = true;
+  orbitControls.enablePan = false;
 
   // light
   scene.add(new THREE.HemisphereLight(0xffffbb, 0x080820, 1));
@@ -70,370 +70,520 @@ const MainScene = () => {
     { lambert: { color: 0x2194ce } }
   );
   //camera target position
-  // orbitControls.target = player.position;
+  orbitControls.target = player.position;
   //blocks:
   let groupBlock = new THREE.Group();
-  var block1 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 93,
-    width: 1,
-    height: 5,
-  });
-  var block2 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: 92,
-    width: 1,
-    height: 3,
-  });
-  var block3 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: 91,
-    width: 1,
-    height: 1,
-  });
+  var block1 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 93,
+      width: 1,
+      height: 5,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block2 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: 92,
+      width: 1,
+      height: 3,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block3 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: 91,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
 
-  var block4 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: 86,
-    width: 1,
-    height: 3,
-  });
-  var block5 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: 80,
-    width: 1,
-    height: 3,
-  });
-  var block6 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: 75,
-    width: 1,
-    height: 3,
-  });
-  var block7 = physics.add.ground({
-    x: 0.05,
-    y: 5,
-    z: 75,
-    width: 1,
-    height: 3,
-  });
-  var block8 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 74,
-    width: 1,
-    height: 1,
-  });
-  var block9 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: 67,
-    width: 1,
-    height: 7,
-  });
-  var block10 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 64,
-    width: 1,
-    height: 1,
-  });
-  var block11 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: 57,
-    width: 1,
-    height: 7,
-  });
-  var block12 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: 54,
-    width: 1,
-    height: 1,
-  });
-  var block13 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 51,
-    width: 1,
-    height: 1,
-  });
-  var block14 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 48,
-    width: 1,
-    height: 1,
-  });
-  var block15 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 45,
-    width: 1,
-    height: 1,
-  });
-  var block16 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 42,
-    width: 1,
-    height: 1,
-  });
-  var block17 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: 42,
-    width: 1,
-    height: 1,
-  });
-  var block18 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 39,
-    width: 1,
-    height: 1,
-  });
-  var block19 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: 39,
-    width: 1,
-    height: 1,
-  });
-  var block20 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: 39,
-    width: 1,
-    height: 1,
-  });
-  var block21 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: 32,
-    width: 1,
-    height: 8,
-  });
-  var block22 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: 21,
-    width: 1,
-    height: 8,
-  });
-  var block23 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 14,
-    width: 1,
-    height: 1,
-  });
-  var block24 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: 14,
-    width: 1,
-    height: 1,
-  });
-  var block25 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: 14,
-    width: 1,
-    height: 1,
-  });
-  var block26 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: 0,
-    width: 1,
-    height: 18,
-  });
-  var block27 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: -1.5,
-    width: 1,
-    height: 15,
-  });
-  var block28 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: -3,
-    width: 1,
-    height: 12,
-  });
-  var block29 = physics.add.ground({
-    x: 0.05,
-    y: 4,
-    z: -4.5,
-    width: 1,
-    height: 9,
-  });
-  var block30 = physics.add.ground({
-    x: 0.05,
-    y: 5,
-    z: -6,
-    width: 1,
-    height: 6,
-  });
-  var block31 = physics.add.ground({
-    x: 0.05,
-    y: 6,
-    z: -7.5,
-    width: 1,
-    height: 3,
-  });
-  var block32 = physics.add.ground({
-    x: 0.05,
-    y: 6,
-    z: -15,
-    width: 1,
-    height: 8,
-  });
-  var block32 = physics.add.ground({
-    x: 0.05,
-    y: 5,
-    z: -22,
-    width: 1,
-    height: 6,
-  });
-  var block33 = physics.add.ground({
-    x: 0.05,
-    y: 5,
-    z: -22,
-    width: 1,
-    height: 6,
-  });
-  var block34 = physics.add.ground({
-    x: 0.05,
-    y: 4,
-    z: -27,
-    width: 1,
-    height: 4,
-  });
-  var block35 = physics.add.ground({
-    x: 0.05,
-    y: 3,
-    z: -31,
-    width: 1,
-    height: 4,
-  });
-  var block36 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: -35,
-    width: 1,
-    height: 4,
-  });
-  var block37 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: -39,
-    width: 1,
-    height: 4,
-  });
+  var block4 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: 86,
+      width: 1,
+      height: 3,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block5 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: 80,
+      width: 1,
+      height: 3,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block6 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: 75,
+      width: 1,
+      height: 3,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block7 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 5,
+      z: 75,
+      width: 1,
+      height: 3,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block8 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 74,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block9 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: 67,
+      width: 1,
+      height: 7,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block10 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 64,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block11 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: 57,
+      width: 1,
+      height: 7,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block12 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: 54,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block13 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 51,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block14 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 48,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block15 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 45,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block16 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 42,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block17 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: 42,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block18 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 39,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block19 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: 39,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block20 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: 39,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block21 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: 32,
+      width: 1,
+      height: 8,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block22 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: 21,
+      width: 1,
+      height: 8,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block23 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 14,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block24 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: 14,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block25 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: 14,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block26 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: 0,
+      width: 1,
+      height: 18,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block27 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: -1.5,
+      width: 1,
+      height: 15,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block28 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: -3,
+      width: 1,
+      height: 12,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block29 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 4,
+      z: -4.5,
+      width: 1,
+      height: 9,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block30 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 5,
+      z: -6,
+      width: 1,
+      height: 6,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block31 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 6,
+      z: -7.5,
+      width: 1,
+      height: 3,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block32 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 6,
+      z: -15,
+      width: 1,
+      height: 8,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block32 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 5,
+      z: -22,
+      width: 1,
+      height: 6,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block33 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 5,
+      z: -22,
+      width: 1,
+      height: 6,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block34 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 4,
+      z: -27,
+      width: 1,
+      height: 4,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block35 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3,
+      z: -31,
+      width: 1,
+      height: 4,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block36 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: -35,
+      width: 1,
+      height: 4,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block37 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: -39,
+      width: 1,
+      height: 4,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
 
-  var block38 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: -45,
-    width: 1,
-    height: 1,
-  });
-  var block39 = physics.add.ground({
-    x: 0.05,
-    y: 1,
-    z: -48,
-    width: 1,
-    height: 1,
-    depth: 3,
-  });
-  var block40 = physics.add.ground({
-    x: 0.05,
-    y: 2,
-    z: -51,
-    width: 1,
-    height: 1,
-    depth: 4,
-  });
-  var block41 = physics.add.ground({
-    x: 0.05,
-    y: 2.5,
-    z: -54,
-    width: 1,
-    height: 1,
-    depth: 5.5,
-  });
-  var block42 = physics.add.ground({
-    x: 0.05,
-    y: 4,
-    z: -57,
-    width: 1,
-    height: 1,
-    depth: 7,
-  });
-  var block43 = physics.add.ground({
-    x: 0.05,
-    y: 5,
-    z: -63,
-    width: 1,
-    height: 5,
-  });
-  var block44 = physics.add.ground({
-    x: 0.05,
-    y: 5,
-    z: -71,
-    width: 1,
-    height: 5,
-  });
-  var block45 = physics.add.ground({
-    x: 0.05,
-    y: 5,
-    z: -79,
-    width: 1,
-    height: 5,
-  });
-  var block46 = physics.add.ground({
-    x: 0.05,
-    y: 3.5,
-    z: -84,
-    width: 1,
-    height: 1,
-    depth: 6,
-  });
-  var block47 = physics.add.ground({
-    x: 0.05,
-    y: 3.5,
-    z: -87,
-    width: 1,
-    height: 1,
-    depth: 6,
-  });
-  var block48 = physics.add.ground({
-    x: 0.05,
-    y: 3.5,
-    z: -90,
-    width: 1,
-    height: 1,
-    depth: 6,
-  });
-  var finalBlock = physics.add.ground({
-    x: 0.05,
-    y: 7,
-    z: -99,
-    width: 1,
-    height: 1,
-    depth: 15,
-    color: "red",
-  });
+  var block38 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: -45,
+      width: 1,
+      height: 1,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block39 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 1,
+      z: -48,
+      width: 1,
+      height: 1,
+      depth: 3,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block40 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2,
+      z: -51,
+      width: 1,
+      height: 1,
+      depth: 4,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block41 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 2.5,
+      z: -54,
+      width: 1,
+      height: 1,
+      depth: 5.5,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block42 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 4,
+      z: -57,
+      width: 1,
+      height: 1,
+      depth: 7,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block43 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 5,
+      z: -63,
+      width: 1,
+      height: 5,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block44 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 5,
+      z: -71,
+      width: 1,
+      height: 5,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block45 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 5,
+      z: -79,
+      width: 1,
+      height: 5,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block46 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3.5,
+      z: -84,
+      width: 1,
+      height: 1,
+      depth: 6,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block47 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3.5,
+      z: -87,
+      width: 1,
+      height: 1,
+      depth: 6,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var block48 = physics.add.ground(
+    {
+      x: 0.05,
+      y: 3.5,
+      z: -90,
+      width: 1,
+      height: 1,
+      depth: 6,
+    },
+    { standard: { color: 0xdcf2a0 } }
+  );
+  var finalBlock = physics.add.ground(
+    {
+      x: 0.05,
+      y: 7,
+      z: -99,
+      width: 1,
+      height: 1,
+      depth: 15,
+    },
+    { standard: { color: "red" } }
+  );
+
   // static ground
   var grounBlock = physics.add.ground({ width: 3, height: 200 });
   //añadimos al grupo
