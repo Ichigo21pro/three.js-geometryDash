@@ -28,11 +28,11 @@ export default class ThreeScene {
     this.GLTFLoader = new GLTFLoader();
     this.GLTFLoader.load(level_1_model, (gltf) => {
       this.levelModel = gltf.scene;
-      gltf.scene.position.set(0.5, 0, 60);
-      gltf.scene.scale.set(10, 10, 10);
-      gltf.scene.rotation.set(0, Math.PI * 0.5, 0);
-      this.scene.add(gltf.scene);
-      this.physics.add.existing(gltf.scene, {
+      this.levelModel.position.set(0.5, -1.2, -20);
+      this.levelModel.scale.set(10, 10, 10);
+      this.levelModel.rotation.set(0, Math.PI * 0.5, 0);
+      this.scene.add(this.levelModel);
+      this.physics.add.existing(this.levelModel, {
         shape: "concaveMesh",
         addChildren: true,
         collisionFlags: 2,
@@ -94,7 +94,7 @@ export default class ThreeScene {
     //bloques del nivel
     this.createLevelBlocks();
     // static ground
-    //var grounBlock = this.physics.add.ground({ width: 3, height: 200 });
+    var grounBlock = this.physics.add.ground({ width: 3, height: 200 });
     //limits
     var backLimmits = this.physics.add.ground(
       {
@@ -119,6 +119,18 @@ export default class ThreeScene {
       },
       { standard: { color: 0xf2a0e2 } }
     );
+    var finnishLimit = this.physics.add.box(
+      {
+        x: 0.05,
+        y: -3,
+        z: -140,
+        width: 20,
+        height: 50,
+        depth: 1,
+      },
+      { standard: { color: 0xf2a0e2 } }
+    );
+    finnishLimit.body.setCollisionFlags(5);
 
     // add a normal sphere using the object factory
     // (NOTE: This will be factory.add.sphere() in the future)
@@ -187,10 +199,22 @@ export default class ThreeScene {
           break;
       }
     });
-    player.body.on.collision((groupBlock, event) => {
-      tocandoSuelo = true;
+
+    //control de coliciones :
+    //suelo
+
+    //groupBlock
+
+    //limites
+    player.body.on.collision((collidedObject, event) => {
+      if (collidedObject === bottomLimmits) {
+        console.log("me cai");
+      } else if (collidedObject === backLimmits) {
+        console.log("en la pared");
+      } else if (collidedObject === finnishLimit) {
+        console.log("llegue a la meta");
+      }
     });
-    console.log(tocandoSuelo);
 
     /*window.addEventListener("keyup", (event) => {
     switch (event.code) {
@@ -229,8 +253,13 @@ export default class ThreeScene {
       player.body.setAngularVelocityZ(0);
       player.body.setAngularVelocityY(0);
       //movimiento fijo eje z
-      //player.body.setVelocityZ(-4);
+      player.body.setVelocityZ(-1);
+      finnishLimit.body.setVelocityZ(50);
       //groupBlock.body.setPosition(0, 0, 5);
+      if (this.levelModel) {
+        this.levelModel.position.z += 0.02;
+        this.levelModel.body.needUpdate = true;
+      }
 
       //////////////////////
       // you have to clear and call render twice because there are 2 scenes
