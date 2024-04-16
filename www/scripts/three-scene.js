@@ -20,6 +20,8 @@ let groupBlock;
 var tocoLimite = false;
 //niveles
 var nivel = 0;
+//
+var tocandoSuelo = false;
 
 //modelos 3D
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -103,8 +105,7 @@ export default class ThreeScene {
     );
     //camera target position
     orbitControls.target = player.position;
-    //bloques del nivel
-    this.createLevelBlocks();
+
     // static ground
     var grounBlock = this.physics.add.ground({ width: 3, height: 200 });
     //limits
@@ -182,7 +183,6 @@ export default class ThreeScene {
       //w: { pressed: false },
       space: { pressed: false },
     };
-    var tocandoSuelo = false;
 
     //atrapamos las teclas
     window.addEventListener("keydown", (event) => {
@@ -205,8 +205,9 @@ export default class ThreeScene {
         break;*/
         case "Space":
           // Realiza el salto.
-
-          player.body.setVelocityY(5.5);
+          if (tocandoSuelo) {
+            player.body.setVelocityY(5.5);
+          }
 
           break;
       }
@@ -225,6 +226,14 @@ export default class ThreeScene {
         tocoLimite = true;
       } else if (collidedObject === finnishLimit) {
         nivel++;
+      }
+
+      if (collidedObject === grounBlock) {
+        tocandoSuelo = true;
+      }
+
+      if (collidedObject === this.levelModel) {
+        tocandoSuelo = true;
       }
     });
 
@@ -285,6 +294,20 @@ export default class ThreeScene {
         this.levelModel.position.z += 0;
         this.levelModel.body.needUpdate = true;
       }
+      //controlar que este en el suelo
+      // Establecer un temporizador que ejecute la función cada 0.5 segundos
+      setInterval(this.resetTocandoSuelo, 500); // 500 milisegundos = 0.5 segundos
+      //
+      player.body.on.collision((collidedObject, event) => {
+        if (collidedObject === grounBlock) {
+          tocandoSuelo = true;
+        }
+
+        if (collidedObject === this.levelModel) {
+          tocandoSuelo = true;
+        }
+      });
+      console.log(tocandoSuelo);
       /////////////////////
       // you have to clear and call render twice because there are 2 scenes
       // one 3d scene and one 2d scene
@@ -298,7 +321,9 @@ export default class ThreeScene {
     requestAnimationFrame(animate);
   }
 
-  createLevelBlocks() {}
+  resetTocandoSuelo() {
+    tocandoSuelo = false;
+  }
 }
 
 // '/ammo' is the folder where all ammo file are
