@@ -16,6 +16,10 @@ import { CSG } from "@enable3d/three-graphics/jsm/csg";
 import { TextTexture, TextSprite } from "@enable3d/three-graphics/jsm/flat";
 //bloques del nivel intanciar variable
 let groupBlock;
+//control limites
+var tocoLimite = false;
+//niveles
+var nivel = 0;
 
 //modelos 3D
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -28,6 +32,14 @@ export default class ThreeScene {
     this.GLTFLoader = new GLTFLoader();
     this.GLTFLoader.load(level_1_model, (gltf) => {
       this.levelModel = gltf.scene;
+      //color
+      // Recorremos todos los materiales del modelo
+      this.levelModel.traverse((child) => {
+        if (child.isMesh) {
+          // Cambiamos el color del material
+          child.material.color.set(0xff0000); // Cambia a tu color deseado en formato hexadecimal
+        }
+      });
       this.levelModel.position.set(0.5, -1.2, -20);
       this.levelModel.scale.set(10, 10, 10);
       this.levelModel.rotation.set(0, Math.PI * 0.5, 0);
@@ -208,11 +220,11 @@ export default class ThreeScene {
     //limites
     player.body.on.collision((collidedObject, event) => {
       if (collidedObject === bottomLimmits) {
-        console.log("me cai");
+        tocoLimite = true;
       } else if (collidedObject === backLimmits) {
-        console.log("en la pared");
+        tocoLimite = true;
       } else if (collidedObject === finnishLimit) {
-        console.log("llegue a la meta");
+        nivel++;
       }
     });
 
@@ -255,7 +267,7 @@ export default class ThreeScene {
       //movimiento fijo eje z
       player.body.setVelocityZ(-1);
       //movimiento del finnish
-      finnishLimit.body.setVelocityZ(0.2); // Avanzar
+      finnishLimit.body.setVelocityZ(1.9); // Avanzar
       finnishLimit.body.setVelocityY(0); // No permitir que caiga por la gravedad
       //groupBlock.body.setPosition(0, 0, 5);
       if (this.levelModel) {
@@ -264,6 +276,16 @@ export default class ThreeScene {
       }
 
       //////////////////////
+      //controlar limites
+      if (tocoLimite) {
+        player.body.setVelocityZ(0);
+        player.body.setVelocityX(0);
+        player.body.setVelocityY(0);
+        finnishLimit.body.setVelocityZ(0);
+        this.levelModel.position.z += 0;
+        this.levelModel.body.needUpdate = true;
+      }
+      /////////////////////
       // you have to clear and call render twice because there are 2 scenes
       // one 3d scene and one 2d scene
       renderer.clear();
