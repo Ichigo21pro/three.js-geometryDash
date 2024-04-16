@@ -18,23 +18,29 @@ import { TextTexture, TextSprite } from "@enable3d/three-graphics/jsm/flat";
 let groupBlock;
 //control limites
 var tocoLimite = false;
+var finDeJuego = false;
 //niveles
 var nivel = 0;
 //
 var tocandoSuelo = false;
+//monedas
+var contadorMonedas = 0;
+//
+var monedas = [];
 
 //modelos 3D
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import level_1_model from "../../assets/Level1.gltf";
+import coinMoney from "../../assets/coin.gltf";
 
 export default class ThreeScene {
   constructor() {
-    //cargar modelo 3D
+    // Cargar modelo 3D del nivel
     // Instancia del cargador GLTFLoader
     this.GLTFLoader = new GLTFLoader();
     this.GLTFLoader.load(level_1_model, (gltf) => {
       this.levelModel = gltf.scene;
-      //color
+      // Color
       // Recorremos todos los materiales del modelo
       this.levelModel.traverse((child) => {
         if (child.isMesh) {
@@ -51,7 +57,19 @@ export default class ThreeScene {
         addChildren: true,
         collisionFlags: 2,
       });
+      // Llamar a la función createCoin con diferentes posiciones para crear múltiples monedas en el nivel
+      this.createCoin(0, 5, 62);
+      this.createCoin(0, 3, 50.5);
+      this.createCoin(0, 5, 40);
+      this.createCoin(0, 5, 28.5);
+      this.createCoin(0, 5, 4.5);
+      this.createCoin(0, 6, -20);
+      this.createCoin(0, 6, -24);
+      this.createCoin(0, 1, -32);
+      this.createCoin(0, 4, -52.5);
+      this.createCoin(0, 11, -80.5);
     });
+
     // sizes
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -159,12 +177,13 @@ export default class ThreeScene {
     camera2d.position.setZ(10);
 
     // add 2d text in UI
-    const text = new TextTexture("Score : ", {
+    const text = new TextTexture("Score : " + contadorMonedas, {
       fontWeight: "bold",
       fontSize: 48,
     });
     const sprite = new TextSprite(text);
     const scale = 0.5;
+
     sprite.setScale(scale);
     sprite.setPosition(
       0 + (text.width * scale) / 2 + 12,
@@ -182,6 +201,7 @@ export default class ThreeScene {
       //s: { pressed: false },
       //w: { pressed: false },
       space: { pressed: false },
+      r: { pressed: false },
     };
 
     //atrapamos las teclas
@@ -198,11 +218,14 @@ export default class ThreeScene {
       case "KeyW":
         keys.w.pressed = true;
 
-        break;
-      case "KeyS":
-        keys.s.pressed = true;
-
         break;*/
+        case "KeyR":
+          keys.r.pressed = true;
+
+          finDeJuego = false;
+          window.location.reload(); // Recargar la página
+
+          break;
         case "Space":
           // Realiza el salto.
           if (tocandoSuelo) {
@@ -221,9 +244,34 @@ export default class ThreeScene {
     //limites
     player.body.on.collision((collidedObject, event) => {
       if (collidedObject === bottomLimmits) {
-        tocoLimite = true;
+        // Mostrar mensaje en el centro de la cámara
+        const gameOverText = new TextTexture(
+          "Fin del juego. Presiona R para reiniciar",
+          {
+            fontWeight: "bold",
+            fontSize: 48,
+          }
+        );
+        const gameOverSprite = new TextSprite(gameOverText);
+        gameOverSprite.setPosition(width / 2, height / 2);
+        scene2d.add(gameOverSprite);
+
+        // Detener la animación
+        finDeJuego = true;
+        return;
       } else if (collidedObject === backLimmits) {
-        tocoLimite = true;
+        // Mostrar mensaje en el centro de la cámara
+        const gameOverText = new TextTexture(
+          "Fin del juego. Presiona R para reiniciar",
+          {
+            fontWeight: "bold",
+            fontSize: 48,
+          }
+        );
+        const gameOverSprite = new TextSprite(gameOverText);
+        gameOverSprite.setPosition(width / 2, height / 2);
+        scene2d.add(gameOverSprite);
+        finDeJuego = true;
       } else if (collidedObject === finnishLimit) {
         nivel++;
       }
@@ -234,6 +282,24 @@ export default class ThreeScene {
 
       if (collidedObject === this.levelModel) {
         tocandoSuelo = true;
+      }
+
+      for (let i = 0; i < monedas.length; i++) {
+        // console.log(monedas[i]);
+        if (collidedObject === monedas[i]) {
+          console.log("Colisión con moneda detectada");
+          // Eliminar la moneda de la escena y del array
+          monedas[i].position.y = -10;
+          monedas[i].body.needUpdate = true;
+          monedas.splice(i, 1);
+
+          // Incrementar el contador de monedas recolectadas u realizar otras acciones
+          contadorMonedas += 10;
+          sprite.setText("Score : " + contadorMonedas);
+          console.log("contadorMonedas:", contadorMonedas);
+          // Salir del bucle ya que hemos encontrado la moneda colisionada
+          break;
+        }
       }
     });
 
@@ -259,15 +325,32 @@ export default class ThreeScene {
   });*/
 
     ////////////////////////////////////////////////////////////////////////////////////
-
+    // Establecer un temporizador que ejecute la función cada 0.5 segundos
+    setInterval(this.resetTocandoSuelo, 50); // 500 milisegundos = 0.5 segundos
     // loop
     const animate = () => {
+      const animationID = requestAnimationFrame(animate);
+      //controlar limites
+      if (finDeJuego) {
+        window.cancelAnimationFrame(animationID);
+        /*
+        // Congelar todo
+        player.body.setVelocity(0, 0, 0);
+        finnishLimit.body.setVelocity(0, 0, 0);
+        monedas.forEach((coin) => coin.body.setVelocity(0, 0, 0));
+        finnishLimit.body.setVelocityZ(0);
+        this.levelModel.position.z += 0;
+        this.levelModel.body.needUpdate = true;
+        // Congelar todo
+        player.body.setVelocity(0, 0, 0);
+        finnishLimit.body.setVelocity(0, 0, 0);
+        monedas.forEach((coin) => coin.body.setVelocity(0, 0, 0));*/
+      }
       this.physics.update(clock.getDelta() * 1000);
       this.physics.updateDebugger();
       ///////////////////////
       //camera
       orbitControls.update();
-
       ///////////////////////
       //para que no se mueva en el eje x y no gire
       player.body.setVelocityX(0);
@@ -276,38 +359,21 @@ export default class ThreeScene {
       //movimiento fijo eje z
       player.body.setVelocityZ(-1);
       //movimiento del finnish
-      finnishLimit.body.setVelocityZ(1.9); // Avanzar
-      finnishLimit.body.setVelocityY(0); // No permitir que caiga por la gravedad
+      finnishLimit.body.setVelocityZ(1.43); // Avanzar
+      finnishLimit.body.setVelocityY(0.1); // No permitir que caiga por la gravedad
       //groupBlock.body.setPosition(0, 0, 5);
       if (this.levelModel) {
         this.levelModel.position.z += 0.02;
         this.levelModel.body.needUpdate = true;
+
+        monedas.forEach((coin) => {
+          coin.body.needUpdate = true;
+        });
       }
 
-      //////////////////////
-      //controlar limites
-      if (tocoLimite) {
-        player.body.setVelocityZ(0);
-        player.body.setVelocityX(0);
-        player.body.setVelocityY(0);
-        finnishLimit.body.setVelocityZ(0);
-        this.levelModel.position.z += 0;
-        this.levelModel.body.needUpdate = true;
-      }
       //controlar que este en el suelo
-      // Establecer un temporizador que ejecute la función cada 0.5 segundos
-      setInterval(this.resetTocandoSuelo, 500); // 500 milisegundos = 0.5 segundos
-      //
-      player.body.on.collision((collidedObject, event) => {
-        if (collidedObject === grounBlock) {
-          tocandoSuelo = true;
-        }
 
-        if (collidedObject === this.levelModel) {
-          tocandoSuelo = true;
-        }
-      });
-      console.log(tocandoSuelo);
+      //
       /////////////////////
       // you have to clear and call render twice because there are 2 scenes
       // one 3d scene and one 2d scene
@@ -315,14 +381,40 @@ export default class ThreeScene {
       renderer.render(this.scene, camera);
       renderer.clearDepth();
       renderer.render(scene2d, camera2d);
-
-      requestAnimationFrame(animate);
     };
     requestAnimationFrame(animate);
   }
 
   resetTocandoSuelo() {
     tocandoSuelo = false;
+  }
+
+  createCoin(positionX, positionY, positionZ) {
+    // Cargar modelo 3D de la moneda
+    this.GLTFLoader.load(coinMoney, (gltf) => {
+      const coin = gltf.scene;
+      // Color
+      // Recorremos todos los materiales del modelo
+      coin.traverse((child) => {
+        if (child.isMesh) {
+          // Cambiamos el color del material
+          child.material.color.set(0xf7f748); // Cambia a tu color deseado en formato hexadecimal
+        }
+      });
+      coin.position.set(positionX, positionY, positionZ); // Establecer posición usando parámetros
+      coin.scale.set(2, 2, 2);
+      coin.rotation.set(0, Math.PI * 0.5, 0);
+      this.scene.add(coin);
+      this.physics.add.existing(coin, {
+        shape: "concaveMesh",
+        addChildren: true,
+        collisionFlags: 2,
+      });
+      // Agregar la moneda al nivel después de que haya sido cargada completamente
+      this.levelModel.add(coin);
+      monedas.push(coin);
+      //////////////////////
+    });
   }
 }
 
