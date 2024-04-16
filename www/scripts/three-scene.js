@@ -130,7 +130,7 @@ export default class ThreeScene {
       },
       { standard: { color: 0xf2a0e2 } }
     );
-    finnishLimit.body.setCollisionFlags(5);
+    finnishLimit.body.setCollisionFlags(4);
 
     // add a normal sphere using the object factory
     // (NOTE: This will be factory.add.sphere() in the future)
@@ -254,7 +254,9 @@ export default class ThreeScene {
       player.body.setAngularVelocityY(0);
       //movimiento fijo eje z
       player.body.setVelocityZ(-1);
-      finnishLimit.body.setVelocityZ(50);
+      //movimiento del finnish
+      finnishLimit.body.setVelocityZ(0.2); // Avanzar
+      finnishLimit.body.setVelocityY(0); // No permitir que caiga por la gravedad
       //groupBlock.body.setPosition(0, 0, 5);
       if (this.levelModel) {
         this.levelModel.position.z += 0.02;
