@@ -82,7 +82,7 @@ export default class ThreeScene {
       this.createCoin(0, 11, -80.5, mundoUNO);
 
       velocidadMUNDO = 0.02;
-      velocidadFINISH = 1.47;
+      velocidadFINISH = 1.5;
     });
     ///////////////////////////////
     ///////////////////////////////
@@ -96,7 +96,7 @@ export default class ThreeScene {
           child.material.color.set(0xff0000); // Cambia a tu color deseado en formato hexadecimal
         }
       });
-      mundoDOS.position.set(0.5, 0.5, -20);
+      mundoDOS.position.set(0.5, -20 - 500, -20);
       mundoDOS.scale.set(10, 10, 10);
       mundoDOS.rotation.set(0, Math.PI * 0.5, 0);
       this.scene.add(mundoDOS);
@@ -106,19 +106,19 @@ export default class ThreeScene {
         collisionFlags: 2,
       });
       // Llamar a la función createCoin con diferentes posiciones para crear múltiples monedas en el nivel
-      this.createCoin(0, 5, 62, mundoDOS);
-      this.createCoin(0, 3, 50.5, mundoDOS);
-      this.createCoin(0, 5, 40, mundoDOS);
-      this.createCoin(0, 5, 28.5, mundoDOS);
-      this.createCoin(0, 5, 4.5, mundoDOS);
-      this.createCoin(0, 5, -20, mundoDOS);
-      this.createCoin(0, 5, -24, mundoDOS);
-      this.createCoin(0, 3, -32, mundoDOS);
-      this.createCoin(0, 4, -52.5, mundoDOS);
-      this.createCoin(0, 11, -80.5, mundoDOS);
+      this.createCoin(0, 5 - 20.5 - 500, 62, mundoDOS);
+      this.createCoin(0, 3 - 20.5 - 500, 50.5, mundoDOS);
+      this.createCoin(0, 5 - 20.5 - 500, 40, mundoDOS);
+      this.createCoin(0, 5 - 20.5 - 500, 28.5, mundoDOS);
+      this.createCoin(0, 5 - 20.5 - 500, 4.5, mundoDOS);
+      this.createCoin(0, 5 - 20.5 - 500, -20, mundoDOS);
+      this.createCoin(0, 5 - 20.5 - 500, -24, mundoDOS);
+      this.createCoin(0, 3 - 20.5 - 500, -32, mundoDOS);
+      this.createCoin(0, 4 - 20.5 - 500, -52.5, mundoDOS);
+      this.createCoin(0, 11 - 20.5 - 500, -80.5, mundoDOS);
 
       velocidadMUNDO = 0.06;
-      velocidadFINISH = 3.6;
+      velocidadFINISH = 1;
     });
     //////////////////////////////////////////
     this.GLTFLoader.load(level_3_model, (gltf) => {
@@ -131,7 +131,7 @@ export default class ThreeScene {
           child.material.color.set(0xff0000); // Cambia a tu color deseado en formato hexadecimal
         }
       });
-      mundoTRES.position.set(0.5, 0.5, -20);
+      mundoTRES.position.set(0.5, -20 - 500, -20);
       mundoTRES.scale.set(10, 10, 10);
       mundoTRES.rotation.set(0, Math.PI * 0.5, 0);
       this.scene.add(mundoTRES);
@@ -141,16 +141,16 @@ export default class ThreeScene {
         collisionFlags: 2,
       });
       // Llamar a la función createCoin con diferentes posiciones para crear múltiples monedas en el nivel
-      this.createCoin(0, 5, 61, mundoTRES);
-      this.createCoin(0, 5, 49.5, mundoTRES);
-      this.createCoin(0, 6, 42, mundoTRES);
-      this.createCoin(0, 6, 30, mundoTRES);
-      this.createCoin(0, 8, 8, mundoTRES);
-      this.createCoin(0, 6, -15, mundoTRES);
-      this.createCoin(0, 8, -25, mundoTRES);
-      this.createCoin(0, 5, -32, mundoTRES);
-      this.createCoin(0, 4, -52.5, mundoTRES);
-      this.createCoin(0, 11, -80.5, mundoTRES);
+      this.createCoin(0, 5 - 20.5 - 500, 61, mundoTRES);
+      this.createCoin(0, 5 - 20.5 - 500, 49.5, mundoTRES);
+      this.createCoin(0, 6 - 20.5 - 500, 42, mundoTRES);
+      this.createCoin(0, 6 - 20.5 - 500, 30, mundoTRES);
+      this.createCoin(0, 8 - 20.5 - 500, 8, mundoTRES);
+      this.createCoin(0, 6 - 20.5 - 500, -15, mundoTRES);
+      this.createCoin(0, 8 - 20.5 - 500, -25, mundoTRES);
+      this.createCoin(0, 5 - 20.5 - 500, -32, mundoTRES);
+      this.createCoin(0, 4 - 20.5 - 500, -52.5, mundoTRES);
+      this.createCoin(0, 11 - 20.5 - 500, -80.5, mundoTRES);
 
       velocidadMUNDO = 0.08;
       velocidadFINISH = 4.5;
@@ -220,9 +220,9 @@ export default class ThreeScene {
       {
         x: 0.05,
         y: 7,
-        z: 110,
+        z: 210,
         width: 50,
-        height: 1,
+        height: 200,
         depth: 20,
       },
       { standard: { color: 0xf2a0e2 } }
@@ -234,7 +234,7 @@ export default class ThreeScene {
         y: -3,
         z: 85.5,
         width: 50,
-        height: 50,
+        height: 500,
         depth: 2,
       },
       { standard: { color: 0xf2a0e2 } }
@@ -376,7 +376,14 @@ export default class ThreeScene {
           { standard: { color: 0xf2a0e2 } }
         );
         this.finnishLimit1.body.setCollisionFlags(4);
-        console.log(nivel);
+
+        mundoDOS.position.set(0.5, 0.5, -20);
+
+        // Remover el mundoDos de la escena
+        this.scene.remove(mundoUNO);
+
+        // Liberar memoria eliminando todas las referencias al mundoDos
+        mundoUNO = null;
       } else if (collidedObject === this.finnishLimit1) {
         nivel = 2;
 
@@ -392,7 +399,8 @@ export default class ThreeScene {
           { standard: { color: 0xf2a0e2 } }
         );
         this.finnishLimit2.body.setCollisionFlags(4);
-        console.log(nivel);
+
+        mundoTRES.position.set(0.5, 0.5, -20);
       }
 
       if (collidedObject === grounBlock) {
@@ -492,8 +500,8 @@ export default class ThreeScene {
             coin.body.needUpdate = true;
           });
 
-          this.finnishLimit1.body.setVelocityZ(velocidadFINISH); // Avanzar
-          this.finnishLimit1.body.setVelocityY(0.1); // No permitir que caiga por la gravedad
+          this.finnishLimit1.body.setVelocityZ(2.6); // Avanzar
+          this.finnishLimit1.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
           // Asegúrate de ajustar la lógica según sea necesario para mundoDOS
         }
       } else if (nivel === 2) {
@@ -505,7 +513,7 @@ export default class ThreeScene {
           });
 
           this.finnishLimit2.body.setVelocityZ(velocidadFINISH); // Avanzar
-          this.finnishLimit2.body.setVelocityY(0.1); // No permitir que caiga por la gravedad
+          this.finnishLimit2.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
           // Asegúrate de ajustar la lógica según sea necesario para mundoTRES
         }
       }
