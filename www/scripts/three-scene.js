@@ -31,6 +31,10 @@ var monedas = [];
 var mundoUNO;
 var mundoDOS;
 var mundoTRES;
+//
+var velocidadMUNDO = 0;
+var velocidadFINISH = 0;
+//
 
 //modelos 3D
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -46,69 +50,112 @@ export default class ThreeScene {
     //
     ///////////////////////////////
     // Cargar modelo 3D del nivel
-    mundoUNO = this.GLTFLoader.load(level_1_model, (gltf) => {
-      this.levelModel = gltf.scene;
+    this.GLTFLoader.load(level_1_model, (gltf) => {
+      mundoUNO = gltf.scene;
       // Color
       // Recorremos todos los materiales del modelo
-      this.levelModel.traverse((child) => {
+      mundoUNO.traverse((child) => {
         if (child.isMesh) {
           // Cambiamos el color del material
           child.material.color.set(0xff0000); // Cambia a tu color deseado en formato hexadecimal
         }
       });
-      this.levelModel.position.set(0.5, -1.2, -20);
-      this.levelModel.scale.set(10, 10, 10);
-      this.levelModel.rotation.set(0, Math.PI * 0.5, 0);
-      this.scene.add(this.levelModel);
-      this.physics.add.existing(this.levelModel, {
+      mundoUNO.position.set(0.5, -1.2, -20);
+      mundoUNO.scale.set(10, 10, 10);
+      mundoUNO.rotation.set(0, Math.PI * 0.5, 0);
+      this.scene.add(mundoUNO);
+      this.physics.add.existing(mundoUNO, {
         shape: "concaveMesh",
         addChildren: true,
         collisionFlags: 2,
       });
       // Llamar a la función createCoin con diferentes posiciones para crear múltiples monedas en el nivel
-      this.createCoin(0, 5, 62);
-      this.createCoin(0, 3, 50.5);
-      this.createCoin(0, 5, 40);
-      this.createCoin(0, 5, 28.5);
-      this.createCoin(0, 5, 4.5);
-      this.createCoin(0, 6, -20);
-      this.createCoin(0, 6, -24);
-      this.createCoin(0, 1, -32);
-      this.createCoin(0, 4, -52.5);
-      this.createCoin(0, 11, -80.5);
+      this.createCoin(0, 5, 62, mundoUNO);
+      this.createCoin(0, 3, 50.5, mundoUNO);
+      this.createCoin(0, 5, 40, mundoUNO);
+      this.createCoin(0, 5, 28.5, mundoUNO);
+      this.createCoin(0, 5, 4.5, mundoUNO);
+      this.createCoin(0, 6, -20, mundoUNO);
+      this.createCoin(0, 6, -24, mundoUNO);
+      this.createCoin(0, 1, -32, mundoUNO);
+      this.createCoin(0, 4, -52.5, mundoUNO);
+      this.createCoin(0, 11, -80.5, mundoUNO);
+
+      velocidadMUNDO = 0.02;
+      velocidadFINISH = 1.47;
     });
     ///////////////////////////////
-    /* mundoDOS = this.GLTFLoader.load(level_2_model, (gltf) => {
-      this.levelModel = gltf.scene;
+    ///////////////////////////////
+    this.GLTFLoader.load(level_2_model, (gltf) => {
+      mundoDOS = gltf.scene;
       // Color
       // Recorremos todos los materiales del modelo
-      this.levelModel.traverse((child) => {
+      mundoDOS.traverse((child) => {
         if (child.isMesh) {
           // Cambiamos el color del material
           child.material.color.set(0xff0000); // Cambia a tu color deseado en formato hexadecimal
         }
       });
-      this.levelModel.position.set(0.5, -1.2, -20);
-      this.levelModel.scale.set(10, 10, 10);
-      this.levelModel.rotation.set(0, Math.PI * 0.5, 0);
-      this.scene.add(this.levelModel);
-      this.physics.add.existing(this.levelModel, {
+      mundoDOS.position.set(0.5, 0.5, -20);
+      mundoDOS.scale.set(10, 10, 10);
+      mundoDOS.rotation.set(0, Math.PI * 0.5, 0);
+      this.scene.add(mundoDOS);
+      this.physics.add.existing(mundoDOS, {
         shape: "concaveMesh",
         addChildren: true,
         collisionFlags: 2,
       });
       // Llamar a la función createCoin con diferentes posiciones para crear múltiples monedas en el nivel
-      this.createCoin(0, 5, 62);
-      this.createCoin(0, 3, 50.5);
-      this.createCoin(0, 5, 40);
-      this.createCoin(0, 5, 28.5);
-      this.createCoin(0, 5, 4.5);
-      this.createCoin(0, 6, -20);
-      this.createCoin(0, 6, -24);
-      this.createCoin(0, 1, -32);
-      this.createCoin(0, 4, -52.5);
-      this.createCoin(0, 11, -80.5);
-    });*/
+      this.createCoin(0, 5, 62, mundoDOS);
+      this.createCoin(0, 3, 50.5, mundoDOS);
+      this.createCoin(0, 5, 40, mundoDOS);
+      this.createCoin(0, 5, 28.5, mundoDOS);
+      this.createCoin(0, 5, 4.5, mundoDOS);
+      this.createCoin(0, 5, -20, mundoDOS);
+      this.createCoin(0, 5, -24, mundoDOS);
+      this.createCoin(0, 3, -32, mundoDOS);
+      this.createCoin(0, 4, -52.5, mundoDOS);
+      this.createCoin(0, 11, -80.5, mundoDOS);
+
+      velocidadMUNDO = 0.06;
+      velocidadFINISH = 3.6;
+    });
+    //////////////////////////////////////////
+    this.GLTFLoader.load(level_3_model, (gltf) => {
+      mundoTRES = gltf.scene;
+      // Color
+      // Recorremos todos los materiales del modelo
+      mundoTRES.traverse((child) => {
+        if (child.isMesh) {
+          // Cambiamos el color del material
+          child.material.color.set(0xff0000); // Cambia a tu color deseado en formato hexadecimal
+        }
+      });
+      mundoTRES.position.set(0.5, 0.5, -20);
+      mundoTRES.scale.set(10, 10, 10);
+      mundoTRES.rotation.set(0, Math.PI * 0.5, 0);
+      this.scene.add(mundoTRES);
+      this.physics.add.existing(mundoTRES, {
+        shape: "concaveMesh",
+        addChildren: true,
+        collisionFlags: 2,
+      });
+      // Llamar a la función createCoin con diferentes posiciones para crear múltiples monedas en el nivel
+      this.createCoin(0, 5, 61, mundoTRES);
+      this.createCoin(0, 5, 49.5, mundoTRES);
+      this.createCoin(0, 6, 42, mundoTRES);
+      this.createCoin(0, 6, 30, mundoTRES);
+      this.createCoin(0, 8, 8, mundoTRES);
+      this.createCoin(0, 6, -15, mundoTRES);
+      this.createCoin(0, 8, -25, mundoTRES);
+      this.createCoin(0, 5, -32, mundoTRES);
+      this.createCoin(0, 4, -52.5, mundoTRES);
+      this.createCoin(0, 11, -80.5, mundoTRES);
+
+      velocidadMUNDO = 0.08;
+      velocidadFINISH = 4.5;
+    });
+
     ///////////////////////////////
     //metemos los mundos en array
     this.levelData = [{ mundoUNO }, { mundoDOS }, { mundoTRES }];
@@ -315,14 +362,50 @@ export default class ThreeScene {
         scene2d.add(gameOverSprite);
         finDeJuego = true;
       } else if (collidedObject === finnishLimit) {
-        nivel++;
+        nivel = 1;
+
+        this.finnishLimit1 = this.physics.add.box(
+          {
+            x: 0.05,
+            y: -3,
+            z: -140,
+            width: 20,
+            height: 50,
+            depth: 1,
+          },
+          { standard: { color: 0xf2a0e2 } }
+        );
+        this.finnishLimit1.body.setCollisionFlags(4);
+        console.log(nivel);
+      } else if (collidedObject === this.finnishLimit1) {
+        nivel = 2;
+
+        this.finnishLimit2 = this.physics.add.box(
+          {
+            x: 0.05,
+            y: -3,
+            z: -140,
+            width: 20,
+            height: 50,
+            depth: 1,
+          },
+          { standard: { color: 0xf2a0e2 } }
+        );
+        this.finnishLimit2.body.setCollisionFlags(4);
+        console.log(nivel);
       }
 
       if (collidedObject === grounBlock) {
         tocandoSuelo = true;
       }
 
-      if (collidedObject === this.levelModel) {
+      if (collidedObject === mundoUNO) {
+        tocandoSuelo = true;
+      }
+      if (collidedObject === mundoDOS) {
+        tocandoSuelo = true;
+      }
+      if (collidedObject === mundoTRES) {
         tocandoSuelo = true;
       }
 
@@ -375,18 +458,6 @@ export default class ThreeScene {
       //controlar limites
       if (finDeJuego) {
         window.cancelAnimationFrame(animationID);
-        /*
-        // Congelar todo
-        player.body.setVelocity(0, 0, 0);
-        finnishLimit.body.setVelocity(0, 0, 0);
-        monedas.forEach((coin) => coin.body.setVelocity(0, 0, 0));
-        finnishLimit.body.setVelocityZ(0);
-        this.levelModel.position.z += 0;
-        this.levelModel.body.needUpdate = true;
-        // Congelar todo
-        player.body.setVelocity(0, 0, 0);
-        finnishLimit.body.setVelocity(0, 0, 0);
-        monedas.forEach((coin) => coin.body.setVelocity(0, 0, 0));*/
       }
       this.physics.update(clock.getDelta() * 1000);
       this.physics.updateDebugger();
@@ -399,18 +470,44 @@ export default class ThreeScene {
       player.body.setAngularVelocityZ(0);
       player.body.setAngularVelocityY(0);
       //movimiento fijo eje z
-      player.body.setVelocityZ(-1);
+      player.body.setVelocityZ(-0.5);
       //movimiento del finnish
-      finnishLimit.body.setVelocityZ(1.47); // Avanzar
+      finnishLimit.body.setVelocityZ(velocidadFINISH); // Avanzar
       finnishLimit.body.setVelocityY(0.1); // No permitir que caiga por la gravedad
       //groupBlock.body.setPosition(0, 0, 5);
-      if (this.levelModel) {
-        this.levelModel.position.z += 0.02;
-        this.levelModel.body.needUpdate = true;
+      if (nivel === 0) {
+        if (mundoUNO) {
+          mundoUNO.position.z += velocidadMUNDO;
+          mundoUNO.body.needUpdate = true;
 
-        monedas.forEach((coin) => {
-          coin.body.needUpdate = true;
-        });
+          monedas.forEach((coin) => {
+            coin.body.needUpdate = true;
+          });
+        }
+      } else if (nivel === 1) {
+        if (mundoDOS) {
+          mundoDOS.position.z += velocidadMUNDO;
+          mundoDOS.body.needUpdate = true;
+          monedas.forEach((coin) => {
+            coin.body.needUpdate = true;
+          });
+
+          this.finnishLimit1.body.setVelocityZ(velocidadFINISH); // Avanzar
+          this.finnishLimit1.body.setVelocityY(0.1); // No permitir que caiga por la gravedad
+          // Asegúrate de ajustar la lógica según sea necesario para mundoDOS
+        }
+      } else if (nivel === 2) {
+        if (mundoTRES) {
+          mundoTRES.position.z += velocidadMUNDO;
+          mundoTRES.body.needUpdate = true;
+          monedas.forEach((coin) => {
+            coin.body.needUpdate = true;
+          });
+
+          this.finnishLimit2.body.setVelocityZ(velocidadFINISH); // Avanzar
+          this.finnishLimit2.body.setVelocityY(0.1); // No permitir que caiga por la gravedad
+          // Asegúrate de ajustar la lógica según sea necesario para mundoTRES
+        }
       }
 
       //controlar que este en el suelo
@@ -431,7 +528,7 @@ export default class ThreeScene {
     tocandoSuelo = false;
   }
 
-  createCoin(positionX, positionY, positionZ) {
+  createCoin(positionX, positionY, positionZ, mundo) {
     // Cargar modelo 3D de la moneda
     this.GLTFLoader.load(coinMoney, (gltf) => {
       const coin = gltf.scene;
@@ -453,7 +550,7 @@ export default class ThreeScene {
         collisionFlags: 2,
       });
       // Agregar la moneda al nivel después de que haya sido cargada completamente
-      this.levelModel.add(coin);
+      mundo.add(coin);
       monedas.push(coin);
       //////////////////////
     });
