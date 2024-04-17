@@ -381,6 +381,7 @@ export default class ThreeScene {
 
         // Remover el mundoDos de la escena
         this.scene.remove(mundoUNO);
+        this.physics.remove(mundoUNO);
 
         // Liberar memoria eliminando todas las referencias al mundoDos
         mundoUNO = null;
@@ -401,6 +402,13 @@ export default class ThreeScene {
         this.finnishLimit2.body.setCollisionFlags(4);
 
         mundoTRES.position.set(0.5, 0.5, -20);
+
+        // Remover el mundoDos de la escena
+        this.scene.remove(mundoDOS);
+        this.physics.remove(mundoDOS);
+
+        // Liberar memoria eliminando todas las referencias al mundoDos
+        mundoDOS = null;
       }
 
       if (collidedObject === grounBlock) {
