@@ -500,7 +500,7 @@ export default class ThreeScene {
             coin.body.needUpdate = true;
           });
 
-          this.finnishLimit1.body.setVelocityZ(2.6); // Avanzar
+          this.finnishLimit1.body.setVelocityZ(1.5); // Avanzar
           this.finnishLimit1.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
           // Asegúrate de ajustar la lógica según sea necesario para mundoDOS
         }
@@ -512,7 +512,7 @@ export default class ThreeScene {
             coin.body.needUpdate = true;
           });
 
-          this.finnishLimit2.body.setVelocityZ(velocidadFINISH); // Avanzar
+          this.finnishLimit2.body.setVelocityZ(1.5); // Avanzar
           this.finnishLimit2.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
           // Asegúrate de ajustar la lógica según sea necesario para mundoTRES
         }
