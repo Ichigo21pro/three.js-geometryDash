@@ -243,7 +243,7 @@ export default class ThreeScene {
       {
         x: 0.05,
         y: -3,
-        z: -140,
+        z: 80 /*-140*/,
         width: 20,
         height: 50,
         depth: 1,
@@ -380,7 +380,7 @@ export default class ThreeScene {
         mundoDOS.position.set(0.5, 0.5, -20);
 
         // Remover el mundo1 de la escena
-
+        this.physics.remove(mundoUNO);
         this.scene.remove(mundoUNO);
         this.scene.remove(finnishLimit);
 
