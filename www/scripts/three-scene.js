@@ -214,7 +214,7 @@ export default class ThreeScene {
     orbitControls.target = player.position;
 
     // static ground
-    var grounBlock = this.physics.add.ground({ width: 3, height: 200 });
+    var grounBlock = this.physics.add.ground({ width: 1, height: 220 });
     //limits
     var backLimmits = this.physics.add.ground(
       {
@@ -379,9 +379,10 @@ export default class ThreeScene {
 
         mundoDOS.position.set(0.5, 0.5, -20);
 
-        // Remover el mundoDos de la escena
+        // Remover el mundo1 de la escena
+
         this.scene.remove(mundoUNO);
-        this.physics.destroy(mundoUNO);
+        this.scene.remove(finnishLimit);
 
         // Liberar memoria eliminando todas las referencias al mundoDos
         mundoUNO = null;
@@ -401,14 +402,18 @@ export default class ThreeScene {
         );
         this.finnishLimit2.body.setCollisionFlags(4);
 
+        mundoDOS.position.set(0.5, -50, -20);
+
         mundoTRES.position.set(0.5, 0.5, -20);
 
         // Remover el mundoDos de la escena
         this.scene.remove(mundoDOS);
-        this.physics.destroy(mundoDOS);
+        this.scene.remove(finnishLimit2);
+        //this.physics.destroy(mundoDOS);
 
         // Liberar memoria eliminando todas las referencias al mundoDos
         mundoDOS = null;
+        finnishLimit2 = null;
       }
 
       if (collidedObject === grounBlock) {
