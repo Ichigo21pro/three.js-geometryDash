@@ -381,7 +381,7 @@ export default class ThreeScene {
 
         // Remover el mundoDos de la escena
         this.scene.remove(mundoUNO);
-        this.physics.remove(mundoUNO);
+        this.physics.destroy(mundoUNO);
 
         // Liberar memoria eliminando todas las referencias al mundoDos
         mundoUNO = null;
@@ -405,7 +405,7 @@ export default class ThreeScene {
 
         // Remover el mundoDos de la escena
         this.scene.remove(mundoDOS);
-        this.physics.remove(mundoDOS);
+        this.physics.destroy(mundoDOS);
 
         // Liberar memoria eliminando todas las referencias al mundoDos
         mundoDOS = null;
