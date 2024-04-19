@@ -272,12 +272,13 @@ export default class ThreeScene {
     this.player.add(listener);
     // Crea un nuevo objeto de audio
     var audioLoader = new THREE.AudioLoader();
-    this.audio = new THREE.Audio(listener);
-    // Carga el archivo de audio
+    var self = this; // Guarda una referencia al contexto actual
+
     audioLoader.load(jumpSound, function (buffer) {
-      this.audio.setBuffer(buffer);
-      this.audio.setLoop(true); // Opcional: establece si quieres que el audio se repita
-      this.audio.setVolume(0.5); // Opcional: ajusta el volumen del audio
+      self.audio = new THREE.Audio(listener); // Crea el objeto audio aquí
+      self.audio.setBuffer(buffer);
+      self.audio.setLoop(true);
+      self.audio.setVolume(0.5);
     });
     ///////////////////////////////
     // static ground
@@ -387,7 +388,8 @@ export default class ThreeScene {
           if (tocandoSuelo) {
             this.player.body.setVelocityY(5.5);
             this.createParticles();
-            this.jumpSound.play();
+            self.audio.setLoop(false);
+            self.audio.play();
             tocandoSuelo = false;
           }
 
