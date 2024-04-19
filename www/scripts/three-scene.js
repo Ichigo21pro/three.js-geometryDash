@@ -391,6 +391,9 @@ export default class ThreeScene {
             self.audio.setLoop(false);
             self.audio.play();
             tocandoSuelo = false;
+            setTimeout(function () {
+              self.audio.stop();
+            }, 300);
           }
 
           break;
@@ -568,8 +571,8 @@ export default class ThreeScene {
       //movimiento fijo eje z
       this.player.body.setVelocityZ(-0.5);
       //movimiento del finnish
-      finnishLimit.body.setVelocityZ(1.45); // Avanzar
-      finnishLimit.body.setVelocityY(0.1); // No permitir que caiga por la gravedad
+      finnishLimit.body.setVelocityZ(2.2); // Avanzar
+      finnishLimit.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
       //groupBlock.body.setPosition(0, 0, 5);
       if (nivel === 0) {
         if (mundoUNO) {
