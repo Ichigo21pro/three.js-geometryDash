@@ -1,6 +1,7 @@
 // three.js
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+// Importa la clase Audio de Three.js
 
 // physics
 import {
@@ -85,6 +86,8 @@ export default class ThreeScene {
       velocidadFINISH = 1.5;
     });
     ///////////////////////////////
+    //"../../assets/jump.mp3"
+
     ///////////////////////////////
     this.GLTFLoader.load(level_2_model, (gltf) => {
       mundoDOS = gltf.scene;
@@ -199,6 +202,43 @@ export default class ThreeScene {
     this.physics = new AmmoPhysics(this.scene);
     this.physics.debug?.enable();
 
+    ////////////////////
+    // Dentro del constructor de ThreeScene
+    this.particleGeometry = new THREE.BufferGeometry();
+    const positions = [];
+    for (let i = 0; i < 100; i++) {
+      const x = (Math.random() - 0.5) * 5;
+      const y = Math.random() * 5;
+      const z = (Math.random() - 0.5) * 5;
+      positions.push(x, y, z);
+    }
+    this.particleGeometry.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3)
+    );
+    this.particleMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.1,
+    });
+    this.particleSystem = new THREE.Points(
+      this.particleGeometry,
+      this.particleMaterial
+    );
+    this.scene.add(this.particleSystem);
+
+    // Función para crear partículas
+    this.createParticles = () => {
+      const positions = this.particleGeometry.attributes.position.array;
+      for (let i = 0; i < positions.length; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 5;
+        positions[i + 1] = Math.random() * 5;
+        positions[i + 2] = (Math.random() - 0.5) * 5;
+      }
+      this.particleGeometry.attributes.position.needsUpdate = true;
+    };
+
+    ///////////////////
+
     // you can access Ammo directly if you want
     // new Ammo.btVector3(1, 2, 3).y()
 
@@ -206,13 +246,28 @@ export default class ThreeScene {
     // the factory will make/add object without physics
     const { factory } = this.physics;
     // blue box
-    const player = this.physics.add.box(
+    this.player = this.physics.add.box(
       { x: 0.05, y: 1, z: 98, width: 1, height: 1 },
       { lambert: { color: 0x2194ce } }
     );
     //camera target position
-    orbitControls.target = player.position;
+    orbitControls.target = this.player.position;
+    ///////////////////////////////
+    //"../../assets/jump.mp3"
 
+    // Crea un objeto AudioListener
+    var listener = new THREE.AudioListener();
+    this.player.add(listener);
+    // Crea un nuevo objeto de audio
+    var audioLoader = new THREE.AudioLoader();
+    this.audio = new THREE.Audio(listener);
+    // Carga el archivo de audio
+    audioLoader.load("../../assets/jump.mp3", function (buffer) {
+      this.audio.setBuffer(buffer);
+      this.audio.setLoop(true); // Opcional: establece si quieres que el audio se repita
+      this.audio.setVolume(0.5); // Opcional: ajusta el volumen del audio
+    });
+    ///////////////////////////////
     // static ground
     var grounBlock = this.physics.add.ground({ width: 1, height: 220 });
     //limits
@@ -243,7 +298,7 @@ export default class ThreeScene {
       {
         x: 0.05,
         y: -3,
-        z: 80 /*-140*/,
+        z: 40 /*-140*/,
         width: 20,
         height: 50,
         depth: 1,
@@ -318,7 +373,9 @@ export default class ThreeScene {
         case "Space":
           // Realiza el salto.
           if (tocandoSuelo) {
-            player.body.setVelocityY(5.5);
+            this.player.body.setVelocityY(5.5);
+            this.createParticles();
+            this.audio.play();
           }
 
           break;
@@ -331,7 +388,7 @@ export default class ThreeScene {
     //groupBlock
 
     //limites
-    player.body.on.collision((collidedObject, event) => {
+    this.player.body.on.collision((collidedObject, event) => {
       if (collidedObject === bottomLimmits) {
         // Mostrar mensaje en el centro de la cámara
         const gameOverText = new TextTexture(
@@ -487,11 +544,11 @@ export default class ThreeScene {
       orbitControls.update();
       ///////////////////////
       //para que no se mueva en el eje x y no gire
-      player.body.setVelocityX(0);
-      player.body.setAngularVelocityZ(0);
-      player.body.setAngularVelocityY(0);
+      this.player.body.setVelocityX(0);
+      this.player.body.setAngularVelocityZ(0);
+      this.player.body.setAngularVelocityY(0);
       //movimiento fijo eje z
-      player.body.setVelocityZ(-0.5);
+      this.player.body.setVelocityZ(-0.5);
       //movimiento del finnish
       finnishLimit.body.setVelocityZ(velocidadFINISH); // Avanzar
       finnishLimit.body.setVelocityY(0.1); // No permitir que caiga por la gravedad
