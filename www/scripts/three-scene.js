@@ -203,7 +203,7 @@ export default class ThreeScene {
     this.physics.debug?.enable();
 
     ////////////////////
-    // Dentro del constructor de ThreeScene
+    // pariculas
     this.particleGeometry = new THREE.BufferGeometry();
     const positions = [];
     for (let i = 0; i < 100; i++) {
@@ -376,6 +376,7 @@ export default class ThreeScene {
             this.player.body.setVelocityY(5.5);
             this.createParticles();
             this.audio.play();
+            tocandoSuelo = false;
           }
 
           break;
