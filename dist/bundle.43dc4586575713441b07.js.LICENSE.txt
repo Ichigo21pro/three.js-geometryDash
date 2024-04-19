@@ -67,12 +67,3 @@
  * @copyright    Copyright (c) 2021 Yannick Deubel; Project Url: https://github.com/yandeu/events
  * @license      {@link https://github.com/yandeu/events/blob/master/LICENSE|MIT}
  */
-
-/**
- * @package      npmjs.com/package/@yandeu/tap (tap.min.js)
- *
- * @author       Yannick Deubel (https://github.com/yandeu)
- * @copyright    Copyright (c) 2021 Yannick Deubel; Project Url: https://github.com/yandeu/tap
- * @license      {@link https://github.com/yandeu/tap/blob/master/LICENSE|MIT}
- * @description  Inspired by tapjs (https://www.npmjs.com/package/tapjs)
- */
