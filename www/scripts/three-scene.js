@@ -254,6 +254,17 @@ export default class ThreeScene {
         this.player.position.z
       );
 
+      setTimeout(() => {
+        // Limpia las posiciones de las partículas
+        for (let i = 0; i < positions.length; i += 3) {
+          positions[i] = 0;
+          positions[i + 1] = 0;
+          positions[i + 2] = 0;
+        }
+        // Actualiza los atributos de la geometría y notifica a Three.js que se han actualizado
+        this.particleGeometry.attributes.position.needsUpdate = true;
+      }, 500);
+
       const positions = this.particleGeometry.attributes.position.array;
       for (let i = 0; i < positions.length; i += 3) {
         positions[i] = (Math.random() - 0.5) * 5 /*this.player.position.x*/;
