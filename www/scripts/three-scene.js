@@ -559,11 +559,29 @@ export default class ThreeScene {
     }
   });*/
 
+    /////////////////////////////////////
+    // FPS
+    var stats = new Stats();
+    stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild(stats.dom);
+
+    /////////////////////////////////////
+
     ////////////////////////////////////////////////////////////////////////////////////
     // Establecer un temporizador que ejecute la función cada 0.5 segundos
     setInterval(this.resetTocandoSuelo, 50); // 500 milisegundos = 0.5 segundos
     // loop
     const animate = () => {
+      ////////////FPS//////////////
+      stats.begin();
+
+      // monitored code goes here
+
+      stats.end();
+
+      requestAnimationFrame(animate);
+      ////////////////////////////
+
       const animationID = requestAnimationFrame(animate);
       //controlar limites
       if (finDeJuego) {
@@ -582,7 +600,7 @@ export default class ThreeScene {
       //movimiento fijo eje z
       this.player.body.setVelocityZ(-0.5);
       //movimiento del finnish
-      finnishLimit.body.setVelocityZ(2.2); // Avanzar
+      finnishLimit.body.setVelocityZ(2.5); // Avanzar
       finnishLimit.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
       //groupBlock.body.setPosition(0, 0, 5);
       if (nivel === 0) {
