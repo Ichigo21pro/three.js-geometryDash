@@ -9,7 +9,7 @@ import {
   ExtendedMesh,
   PhysicsLoader,
 } from "@enable3d/ammo-physics";
-import * as Ammo from '../ammo/ammo.js';
+import * as Ammo from "../ammo/ammo.js";
 
 // CSG
 import { CSG } from "@enable3d/three-graphics/jsm/csg";
@@ -37,6 +37,8 @@ var mundoTRES;
 var velocidadMUNDO = 0;
 var velocidadFINISH = 0;
 //
+var mundoUNOTerminado = false;
+var mundoDOSTerminado = false;
 
 //modelos 3D
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -206,6 +208,20 @@ export default class ThreeScene {
     this.physics = new AmmoPhysics(this.scene);
     this.physics.debug?.enable();
 
+    // you can access Ammo directly if you want
+    // new Ammo.btVector3(1, 2, 3).y()
+
+    // extract the object factory from physics
+    // the factory will make/add object without physics
+    const { factory } = this.physics;
+    // blue box
+    this.player = this.physics.add.box(
+      { x: 0.05, y: 1, z: 98, width: 1, height: 1 },
+      { lambert: { color: 0x2194ce } }
+    );
+    //camera target position
+    orbitControls.target = this.player.position;
+
     ////////////////////
     // pariculas
     this.particleGeometry = new THREE.BufferGeometry();
@@ -232,30 +248,22 @@ export default class ThreeScene {
 
     // Función para crear partículas
     this.createParticles = () => {
+      this.particleSystem.position.set(
+        this.player.position.x,
+        this.player.position.y,
+        this.player.position.z
+      );
+
       const positions = this.particleGeometry.attributes.position.array;
       for (let i = 0; i < positions.length; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 5;
-        positions[i + 1] = Math.random() * 5;
-        positions[i + 2] = (Math.random() - 0.5) * 5;
+        positions[i] = (Math.random() - 0.5) * 5 /*this.player.position.x*/;
+        positions[i + 1] = Math.random() * 5 /*this.player.position.y*/;
+        positions[i + 2] = (Math.random() - 0.5) * 5 /*this.player.position.z*/;
       }
       this.particleGeometry.attributes.position.needsUpdate = true;
     };
 
     ///////////////////
-
-    // you can access Ammo directly if you want
-    // new Ammo.btVector3(1, 2, 3).y()
-
-    // extract the object factory from physics
-    // the factory will make/add object without physics
-    const { factory } = this.physics;
-    // blue box
-    this.player = this.physics.add.box(
-      { x: 0.05, y: 1, z: 98, width: 1, height: 1 },
-      { lambert: { color: 0x2194ce } }
-    );
-    //camera target position
-    orbitControls.target = this.player.position;
     ///////////////////////////////
     //"../../assets/jump.mp3"
 
@@ -302,7 +310,7 @@ export default class ThreeScene {
       {
         x: 0.05,
         y: -3,
-        z: 40 /*-140*/,
+        z: -140 /*40*/,
         width: 20,
         height: 50,
         depth: 1,
@@ -379,7 +387,7 @@ export default class ThreeScene {
           if (tocandoSuelo) {
             this.player.body.setVelocityY(5.5);
             this.createParticles();
-            this.audio.play();
+            this.jumpSound.play();
             tocandoSuelo = false;
           }
 
@@ -423,7 +431,7 @@ export default class ThreeScene {
         gameOverSprite.setPosition(width / 2, height / 2);
         scene2d.add(gameOverSprite);
         finDeJuego = true;
-      } else if (collidedObject === finnishLimit) {
+      } else if (collidedObject === finnishLimit && !mundoUNOTerminado) {
         nivel = 1;
 
         this.finnishLimit1 = this.physics.add.box(
@@ -442,13 +450,14 @@ export default class ThreeScene {
         mundoDOS.position.set(0.5, 0.5, -20);
 
         // Remover el mundo1 de la escena
-        this.physics.remove(mundoUNO);
+
         this.scene.remove(mundoUNO);
         this.scene.remove(finnishLimit);
 
         // Liberar memoria eliminando todas las referencias al mundoDos
         mundoUNO = null;
-      } else if (collidedObject === this.finnishLimit1) {
+        mundoUNOTerminado = true;
+      } else if (collidedObject === this.finnishLimit1 && !mundoDOSTerminado) {
         nivel = 2;
 
         this.finnishLimit2 = this.physics.add.box(
@@ -476,6 +485,8 @@ export default class ThreeScene {
         // Liberar memoria eliminando todas las referencias al mundoDos
         mundoDOS = null;
         finnishLimit2 = null;
+
+        mundoDOSTerminado = true;
       }
 
       if (collidedObject === grounBlock) {
@@ -555,7 +566,7 @@ export default class ThreeScene {
       //movimiento fijo eje z
       this.player.body.setVelocityZ(-0.5);
       //movimiento del finnish
-      finnishLimit.body.setVelocityZ(velocidadFINISH); // Avanzar
+      finnishLimit.body.setVelocityZ(1.45); // Avanzar
       finnishLimit.body.setVelocityY(0.1); // No permitir que caiga por la gravedad
       //groupBlock.body.setPosition(0, 0, 5);
       if (nivel === 0) {
