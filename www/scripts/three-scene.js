@@ -9,6 +9,7 @@ import {
   ExtendedMesh,
   PhysicsLoader,
 } from "@enable3d/ammo-physics";
+import * as Ammo from '../ammo/ammo.js';
 
 // CSG
 import { CSG } from "@enable3d/three-graphics/jsm/csg";
@@ -43,6 +44,9 @@ import level_1_model from "../../assets/Level1.gltf";
 import level_2_model from "../../assets/Level2.gltf";
 import level_3_model from "../../assets/Level3.gltf";
 import coinMoney from "../../assets/coin.gltf";
+
+// Audio
+import jumpSound from "../../assets/jump.mp3";
 
 export default class ThreeScene {
   constructor() {
@@ -262,7 +266,7 @@ export default class ThreeScene {
     var audioLoader = new THREE.AudioLoader();
     this.audio = new THREE.Audio(listener);
     // Carga el archivo de audio
-    audioLoader.load("../../assets/jump.mp3", function (buffer) {
+    audioLoader.load(jumpSound, function (buffer) {
       this.audio.setBuffer(buffer);
       this.audio.setLoop(true); // Opcional: establece si quieres que el audio se repita
       this.audio.setVolume(0.5); // Opcional: ajusta el volumen del audio
@@ -636,7 +640,7 @@ export default class ThreeScene {
   }
 }
 
-// '/ammo' is the folder where all ammo file are
-PhysicsLoader("/ammo", () => {
+// Load Ammo
+Ammo().then(() => {
   const threeScene = new ThreeScene();
 });
