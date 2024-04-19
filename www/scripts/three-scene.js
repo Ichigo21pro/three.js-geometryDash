@@ -579,7 +579,6 @@ export default class ThreeScene {
 
       stats.end();
 
-      requestAnimationFrame(animate);
       ////////////////////////////
 
       const animationID = requestAnimationFrame(animate);
