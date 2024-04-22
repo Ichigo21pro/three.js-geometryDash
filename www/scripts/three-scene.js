@@ -47,9 +47,12 @@ import level_2_model from "../../assets/Level2.gltf";
 import level_3_model from "../../assets/Level3.gltf";
 import coinMoney from "../../assets/coin.gltf";
 import Stats from "stats.js";
+import BatchedRenderer from "three.quarks";
 
 // Audio
 import jumpSound from "../../assets/jump.mp3";
+// PArticles
+import jumpParticle from "../../assets/JumpExplo.json";
 
 export default class ThreeScene {
   constructor() {
@@ -225,7 +228,8 @@ export default class ThreeScene {
 
     ////////////////////
     // pariculas
-    this.particleGeometry = new THREE.BufferGeometry();
+    /*this.particleGeometry = new THREE.BufferGeometry();
+    
     const positions = [];
     for (let i = 0; i < 100; i++) {
       const x = (Math.random() - 0.5) * 5;
@@ -266,15 +270,38 @@ export default class ThreeScene {
         this.particleGeometry.attributes.position.needsUpdate = true;
       }, 500);
 
-      const positions = this.particleGeometry.attributes.position.array;
+     const positions = this.particleGeometry.attributes.position.array;
       for (let i = 0; i < positions.length; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 5 /*this.player.position.x*/;
-        positions[i + 1] = Math.random() * 5 /*this.player.position.y*/;
-        positions[i + 2] = (Math.random() - 0.5) * 5 /*this.player.position.z*/;
+        positions[i] = (Math.random() - 0.5) * 5 ;
+        positions[i + 1] = Math.random() * 5 ;
+        positions[i + 2] = (Math.random() - 0.5) * 5 ;
       }
       this.particleGeometry.attributes.position.needsUpdate = true;
-    };
+    }; */
 
+    const batchSystem = new BatchedRenderer();
+    const loader = new QuarksLoader();
+    loader.setCrossOrigin("");
+    loader.load(
+      jsonURL,
+      (obj) => {
+        // the API uses manuel loading because users may need to
+        // store the VFX somewhere to reuse it later.
+        obj.traverse((child) => {
+          if (child.type === "ParticleEmitter") {
+            // only if want to display the VFX
+            batchRenderer.addSystem(child.system);
+          }
+        });
+        if (obj.type === "ParticleEmitter") {
+          batchRenderer.addSystem(obj.system);
+        }
+        scene.add(obj);
+      },
+      () => {},
+      () => {}
+    );
+    scene.add(batchSystem);
     ///////////////////
     ///////////////////////////////
     //"../../assets/jump.mp3"
