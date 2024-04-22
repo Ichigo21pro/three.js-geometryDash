@@ -46,6 +46,7 @@ import level_1_model from "../../assets/Level1.gltf";
 import level_2_model from "../../assets/Level2.gltf";
 import level_3_model from "../../assets/Level3.gltf";
 import coinMoney from "../../assets/coin.gltf";
+import Stats from "stats.js";
 
 // Audio
 import jumpSound from "../../assets/jump.mp3";
@@ -174,7 +175,7 @@ export default class ThreeScene {
 
     // scene
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0xf0f0f0);
+    this.scene.background = new THREE.Color(0x00008b);
 
     // renderer
     const renderer = new THREE.WebGLRenderer();
@@ -299,9 +300,9 @@ export default class ThreeScene {
       {
         x: 0.05,
         y: 7,
-        z: 210,
+        z: 110,
         width: 50,
-        height: 200,
+        height: 1,
         depth: 20,
       },
       { standard: { color: 0xf2a0e2 } }
@@ -562,7 +563,7 @@ export default class ThreeScene {
     /////////////////////////////////////
     // FPS
     var stats = new Stats();
-    stats.showPanel(1); // 0: fps, 1: ms, 2: mb, 3+: custom
+    stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
     document.body.appendChild(stats.dom);
 
     /////////////////////////////////////
@@ -576,8 +577,6 @@ export default class ThreeScene {
       stats.begin();
 
       // monitored code goes here
-
-      stats.end();
 
       ////////////////////////////
 
@@ -599,7 +598,7 @@ export default class ThreeScene {
       //movimiento fijo eje z
       this.player.body.setVelocityZ(-0.5);
       //movimiento del finnish
-      finnishLimit.body.setVelocityZ(2.5); // Avanzar
+      finnishLimit.body.setVelocityZ(4.5); // Avanzar
       finnishLimit.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
       //groupBlock.body.setPosition(0, 0, 5);
       if (nivel === 0) {
@@ -619,8 +618,8 @@ export default class ThreeScene {
             coin.body.needUpdate = true;
           });
 
-          this.finnishLimit1.body.setVelocityZ(1.5); // Avanzar
-          this.finnishLimit1.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
+          this.finnishLimit1.body.setVelocityZ(1.7); // Avanzar
+          this.finnishLimit1.body.setVelocityY(0.4); // No permitir que caiga por la gravedad
           // Asegúrate de ajustar la lógica según sea necesario para mundoDOS
         }
       } else if (nivel === 2) {
@@ -631,7 +630,7 @@ export default class ThreeScene {
             coin.body.needUpdate = true;
           });
 
-          this.finnishLimit2.body.setVelocityZ(1.5); // Avanzar
+          this.finnishLimit2.body.setVelocityZ(1.7); // Avanzar
           this.finnishLimit2.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
           // Asegúrate de ajustar la lógica según sea necesario para mundoTRES
         }
@@ -647,6 +646,8 @@ export default class ThreeScene {
       renderer.render(this.scene, camera);
       renderer.clearDepth();
       renderer.render(scene2d, camera2d);
+
+      stats.end();
     };
     requestAnimationFrame(animate);
   }
