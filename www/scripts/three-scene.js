@@ -67,7 +67,7 @@ import {
 // Audio
 import jumpSound from "../../assets/jump.mp3";
 // PArticles
-import jumpParticle from "../../assets/JumpExplo.json";
+import jumpParticle from "../../assets/particle.png";
 
 export default class ThreeScene {
   constructor() {
@@ -297,23 +297,23 @@ export default class ThreeScene {
     const batchSystem = new BatchedRenderer();
 
     // Carga la textura para las partículas
-    const texture = new THREE.TextureLoader().load("atlas.png");
+    const texture = new THREE.TextureLoader().load(jumpParticle);
 
     // Configura el sistema de partículas para simular un salto
     const jumpParticlesConfig = {
-      duration: 0.5, // Duración del efecto en segundos
-      looping: false, // No es un efecto repetitivo
-      startLife: new IntervalValue(0.2, 0.5), // Vida de las partículas
-      startSpeed: new IntervalValue(1, 5), // Velocidad inicial
+      duration: 1.0, // Duración del efecto en segundos
+      looping: true, // No es un efecto repetitivo
+      startLife: new IntervalValue(1.5, 2.9), // Vida de las partículas
+      startSpeed: new IntervalValue(8, 10), // Velocidad inicial
       startSize: new IntervalValue(0.5, 1), // Tamaño de las partículas
       startColor: new ConstantColor(new THREE.Vector4(1, 1, 1, 1)), // Color de inicio
       worldSpace: true, // Espacio global
-      maxParticle: 10, // Máximo de partículas
+      maxParticle: 100, // Máximo de partículas
       emissionOverTime: new ConstantValue(0), // Emisión con el tiempo
       emissionBursts: [
         {
           time: 0, // Inicia inmediatamente
-          count: new ConstantValue(5), // Número de partículas
+          count: new ConstantValue(20), // Número de partículas
           cycle: 1, // Ciclos de emisión
           interval: 0.1, // Intervalo entre ciclos
           probability: 1, // Probabilidad de emisión
@@ -322,7 +322,7 @@ export default class ThreeScene {
       shape: new PointEmitter(), // Emisor puntual
       material: new THREE.MeshBasicMaterial({
         map: texture,
-        blending: AdditiveBlending,
+
         transparent: true,
       }),
       renderOrder: 1, // Orden de renderizado
@@ -342,15 +342,6 @@ export default class ThreeScene {
     );
 
     jumpParticles.addBehavior(
-      new ColorOverLife(
-        new ColorRange(
-          new THREE.Vector4(1, 1, 1, 1), // Color al inicio
-          new THREE.Vector4(0.5, 0.5, 0.5, 0) // Color al final
-        )
-      )
-    );
-
-    jumpParticles.addBehavior(
       new FrameOverLife(
         new PiecewiseBezier([
           [new Bezier(0, 1, 2, 3), 0], // Animación del atlas
@@ -360,11 +351,17 @@ export default class ThreeScene {
 
     // Añadir el sistema de partículas al BatchRenderer y al objeto en la escena
     batchSystem.addSystem(jumpParticles);
-    scene.add(jumpParticles.emitter);
-    scene.add(batchSystem);
+    this.scene.add(jumpParticles.emitter);
+    this.scene.add(batchSystem);
 
     // Ajustar la posición del emisor para simular el origen del salto
     //jumpParticles.emitter.position.set(0, 0, 0); // Posición del emisor (cambiar según la escena)
+    jumpParticles.emitter.position.set(
+      this.player.position.x,
+      this.player.position.y,
+      this.player.position.z
+    ); // Posición particulas
+    jumpParticles.emitter.rotation.set(0, Math.PI * 0.5, 0); // Rotación particulas para que miren a la cámara
 
     ///////////////////
     ///////////////////////////////
@@ -492,8 +489,9 @@ export default class ThreeScene {
             this.player.body.setVelocityY(5.5);
             //this.createParticles();
             // Ajustar la posición del emisor para simular el origen del salto
-            jumpParticles.emitter.position.set(0, 0, 0); // Posición particulas
-            jumpParticles.start();
+
+            jumpParticles.emitter.position.set(this.player.position); // Posición particulas
+            // jumpParticles.startLife();
             self.audio.setLoop(false);
             self.audio.play();
             tocandoSuelo = false;
@@ -667,11 +665,12 @@ export default class ThreeScene {
     setInterval(this.resetTocandoSuelo, 50); // 500 milisegundos = 0.5 segundos
     // loop
     const animate = () => {
+      const clockDelta = clock.getDelta();
       ////////////FPS//////////////
       stats.begin();
 
       // particulas
-      batchSystem.update(); // Actualizar el BatchRenderer
+      batchSystem.update(clockDelta); // Actualizar el BatchRenderer
 
       ////////////////////////////
 
@@ -680,7 +679,7 @@ export default class ThreeScene {
       if (finDeJuego) {
         window.cancelAnimationFrame(animationID);
       }
-      this.physics.update(clock.getDelta() * 1000);
+      this.physics.update(clockDelta * 1000);
       this.physics.updateDebugger();
       ///////////////////////
       //camera
