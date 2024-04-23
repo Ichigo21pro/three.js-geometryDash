@@ -223,9 +223,16 @@ export default class ThreeScene {
     light.position.set(50, 200, 100);
     light.position.multiplyScalar(1.3);
 
+    //url
+    const urlParams = new URLSearchParams(window.location.search);
+    const debug = urlParams.get("debug");
+
     // physics
     this.physics = new AmmoPhysics(this.scene);
-    this.physics.debug?.enable();
+    // Habilitar el modo debug si el parámetro 'debug' es igual a 'true'
+    if (debug === "true") {
+      this.physics.debug?.enable();
+    }
 
     // you can access Ammo directly if you want
     // new Ammo.btVector3(1, 2, 3).y()
@@ -494,7 +501,7 @@ export default class ThreeScene {
               this.player.position.y,
               this.player.position.z
             ); // Posición particulas
-            console.log(jumpParticles);
+
             // Disparar el sistema de partículas
             jumpParticles.restart();
             //
