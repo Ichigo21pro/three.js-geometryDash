@@ -47,7 +47,22 @@ import level_2_model from "../../assets/Level2.gltf";
 import level_3_model from "../../assets/Level3.gltf";
 import coinMoney from "../../assets/coin.gltf";
 import Stats from "stats.js";
-import BatchedRenderer from "three.quarks";
+//particulas
+import { BatchedRenderer, ParticleSystem } from "three.quarks";
+import {
+  PointEmitter,
+  IntervalValue,
+  ConstantValue,
+  ConstantColor,
+  SizeOverLife,
+  FrameOverLife,
+  PiecewiseBezier,
+  ColorOverLife,
+  Bezier,
+  AdditiveBlending,
+  RenderMode,
+  TextureLoader,
+} from "three.quarks";
 
 // Audio
 import jumpSound from "../../assets/jump.mp3";
@@ -278,30 +293,79 @@ export default class ThreeScene {
       }
       this.particleGeometry.attributes.position.needsUpdate = true;
     }; */
-
+    // Crea un sistema de renderizado para partículas
     const batchSystem = new BatchedRenderer();
-    const loader = new QuarksLoader();
-    loader.setCrossOrigin("");
-    loader.load(
-      jsonURL,
-      (obj) => {
-        // the API uses manuel loading because users may need to
-        // store the VFX somewhere to reuse it later.
-        obj.traverse((child) => {
-          if (child.type === "ParticleEmitter") {
-            // only if want to display the VFX
-            batchRenderer.addSystem(child.system);
-          }
-        });
-        if (obj.type === "ParticleEmitter") {
-          batchRenderer.addSystem(obj.system);
-        }
-        scene.add(obj);
-      },
-      () => {},
-      () => {}
+
+    // Carga la textura para las partículas
+    const texture = new THREE.TextureLoader().load("atlas.png");
+
+    // Configura el sistema de partículas para simular un salto
+    const jumpParticlesConfig = {
+      duration: 0.5, // Duración del efecto en segundos
+      looping: false, // No es un efecto repetitivo
+      startLife: new IntervalValue(0.2, 0.5), // Vida de las partículas
+      startSpeed: new IntervalValue(1, 5), // Velocidad inicial
+      startSize: new IntervalValue(0.5, 1), // Tamaño de las partículas
+      startColor: new ConstantColor(new THREE.Vector4(1, 1, 1, 1)), // Color de inicio
+      worldSpace: true, // Espacio global
+      maxParticle: 10, // Máximo de partículas
+      emissionOverTime: new ConstantValue(0), // Emisión con el tiempo
+      emissionBursts: [
+        {
+          time: 0, // Inicia inmediatamente
+          count: new ConstantValue(5), // Número de partículas
+          cycle: 1, // Ciclos de emisión
+          interval: 0.1, // Intervalo entre ciclos
+          probability: 1, // Probabilidad de emisión
+        },
+      ],
+      shape: new PointEmitter(), // Emisor puntual
+      material: new THREE.MeshBasicMaterial({
+        map: texture,
+        blending: AdditiveBlending,
+        transparent: true,
+      }),
+      renderOrder: 1, // Orden de renderizado
+      renderMode: RenderMode.Mesh, // Modo de renderizado
+    };
+
+    // Crear sistema de partículas a partir de la configuración
+    const jumpParticles = new ParticleSystem(jumpParticlesConfig);
+
+    // Añadir comportamientos para modificar la trayectoria y apariencia de las partículas
+    jumpParticles.addBehavior(
+      new SizeOverLife(
+        new PiecewiseBezier([
+          [new Bezier(1, 0.5, 0.2, 0), 0], // Tamaño decrece con la vida
+        ])
+      )
     );
+
+    jumpParticles.addBehavior(
+      new ColorOverLife(
+        new ColorRange(
+          new THREE.Vector4(1, 1, 1, 1), // Color al inicio
+          new THREE.Vector4(0.5, 0.5, 0.5, 0) // Color al final
+        )
+      )
+    );
+
+    jumpParticles.addBehavior(
+      new FrameOverLife(
+        new PiecewiseBezier([
+          [new Bezier(0, 1, 2, 3), 0], // Animación del atlas
+        ])
+      )
+    );
+
+    // Añadir el sistema de partículas al BatchRenderer y al objeto en la escena
+    batchSystem.addSystem(jumpParticles);
+    scene.add(jumpParticles.emitter);
     scene.add(batchSystem);
+
+    // Ajustar la posición del emisor para simular el origen del salto
+    //jumpParticles.emitter.position.set(0, 0, 0); // Posición del emisor (cambiar según la escena)
+
     ///////////////////
     ///////////////////////////////
     //"../../assets/jump.mp3"
@@ -426,7 +490,10 @@ export default class ThreeScene {
           // Realiza el salto.
           if (tocandoSuelo) {
             this.player.body.setVelocityY(5.5);
-            this.createParticles();
+            //this.createParticles();
+            // Ajustar la posición del emisor para simular el origen del salto
+            jumpParticles.emitter.position.set(0, 0, 0); // Posición particulas
+            jumpParticles.start();
             self.audio.setLoop(false);
             self.audio.play();
             tocandoSuelo = false;
@@ -603,7 +670,8 @@ export default class ThreeScene {
       ////////////FPS//////////////
       stats.begin();
 
-      // monitored code goes here
+      // particulas
+      batchSystem.update(); // Actualizar el BatchRenderer
 
       ////////////////////////////
 
