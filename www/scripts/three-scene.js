@@ -302,8 +302,7 @@ export default class ThreeScene {
     // Configura el sistema de partículas para simular un salto
     const jumpParticlesConfig = {
       duration: 1.0, // Duración del efecto en segundos
-      looping: true, // No es un efecto repetitivo
-      startLife: new IntervalValue(1.5, 2.9), // Vida de las partículas
+      looping: false, // No es un efecto repetitivo
       startSpeed: new IntervalValue(8, 10), // Velocidad inicial
       startSize: new IntervalValue(0.5, 1), // Tamaño de las partículas
       startColor: new ConstantColor(new THREE.Vector4(1, 1, 1, 1)), // Color de inicio
@@ -490,8 +489,15 @@ export default class ThreeScene {
             //this.createParticles();
             // Ajustar la posición del emisor para simular el origen del salto
 
-            jumpParticles.emitter.position.set(this.player.position); // Posición particulas
-            // jumpParticles.startLife();
+            jumpParticles.emitter.position.set(
+              this.player.position.x,
+              this.player.position.y,
+              this.player.position.z
+            ); // Posición particulas
+            console.log(jumpParticles);
+            // Disparar el sistema de partículas
+            jumpParticles.restart();
+            //
             self.audio.setLoop(false);
             self.audio.play();
             tocandoSuelo = false;
