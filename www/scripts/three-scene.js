@@ -68,6 +68,14 @@ import {
 import jumpSound from "../../assets/jump.mp3";
 // PArticles
 import jumpParticle from "../../assets/particle.png";
+//texture
+import tilesBaseDIFFI from "../../assets/texture/rock/Rock_04_DIFF.png";
+import tilesBaseDISPI from "../../assets/texture/rock/Rock_04_DISP.png";
+import tilesBaseNRMI from "../../assets/texture/rock/Rock_04_NRM.png";
+import tilesBaseOCCI from "../../assets/texture/rock/Rock_04_OCC.png";
+import tilesBaseSPECI from "../../assets/texture/rock/Rock_04_SPEC.png";
+
+///////////////
 
 export default class ThreeScene {
   constructor() {
@@ -234,8 +242,16 @@ export default class ThreeScene {
       this.physics.debug?.enable();
     }
 
-    // you can access Ammo directly if you want
-    // new Ammo.btVector3(1, 2, 3).y()
+    /////////////////TEXTURE//////////////
+
+    const textureLoader = new THREE.TextureLoader();
+    const tilesBaseDIFF = textureLoader.load(tilesBaseDIFFI);
+    const tilesBaseDISP = textureLoader.load(tilesBaseDISPI);
+    const tilesBaseNRM = textureLoader.load(tilesBaseNRMI);
+    const tilesBaseOCC = textureLoader.load(tilesBaseOCCI);
+    const tilesBaseSPEC = textureLoader.load(tilesBaseSPECI);
+
+    ////////////////
 
     // extract the object factory from physics
     // the factory will make/add object without physics
@@ -247,6 +263,16 @@ export default class ThreeScene {
     );
     //camera target position
     orbitControls.target = this.player.position;
+    //console.log(this.player);
+    ////////
+    this.player.material = new THREE.MeshStandardMaterial({
+      map: tilesBaseDIFF, // Mapa de color/difusión
+      normalMap: tilesBaseNRM, // Mapa de normales
+      aoMap: tilesBaseOCC, // Mapa de oclusión ambiental
+      displacementMap: tilesBaseDISP, // Mapa de desplazamiento
+      displacementScale: 0, // Controla cuánto afecta el desplazamiento
+      roughnessMap: tilesBaseSPEC, // Mapa de especularidad/aspereza
+    });
 
     ////////////////////
     // pariculas
