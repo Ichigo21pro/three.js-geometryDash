@@ -49,6 +49,8 @@ import { PointEmitter, IntervalValue, ConstantValue, ConstantColor, SizeOverLife
 
 // Audio
 import jumpSound from '../../assets/jump.mp3';
+import coinSound from '../../assets/coin.mp3';
+import looseSound from '../../assets/loose.mp3';
 // PArticles
 import jumpParticle from '../../assets/particle.png';
 //texture//
@@ -385,12 +387,30 @@ export default class ThreeScene {
     var audioLoader = new THREE.AudioLoader();
     var self = this; // Guarda una referencia al contexto actual
 
+    //
+    audioLoader.load(looseSound, function (buffer) {
+      self.audioLoose = new THREE.Audio(listener); // Crea el objeto audio aquí
+      self.audioLoose.setBuffer(buffer);
+      self.audioLoose.setLoop(false);
+      self.audioLoose.setVolume(0.5);
+    });
+    //
+
     audioLoader.load(jumpSound, function (buffer) {
       self.audio = new THREE.Audio(listener); // Crea el objeto audio aquí
       self.audio.setBuffer(buffer);
       self.audio.setLoop(true);
       self.audio.setVolume(0.5);
     });
+
+    //coin
+    audioLoader.load(coinSound, function (buffer) {
+      self.audioCoin = new THREE.Audio(listener); // Crea el objeto audio aquí
+      self.audioCoin.setBuffer(buffer);
+      self.audioCoin.setLoop(true);
+      self.audioCoin.setVolume(0.5);
+    });
+
     ///////////////////////////////
     // static ground
 
@@ -626,6 +646,14 @@ export default class ThreeScene {
       for (let i = 0; i < monedas.length; i++) {
         // console.log(monedas[i]);
         if (collidedObject === monedas[i]) {
+          //
+          self.audioCoin.setLoop(false);
+          self.audioCoin.play();
+
+          setTimeout(function () {
+            self.audioCoinr.stop();
+          }, 300);
+          //
           console.log('Colisión con moneda detectada');
           // Eliminar la moneda de la escena y del array
           monedas[i].position.y = -10;
@@ -689,6 +717,7 @@ export default class ThreeScene {
       //controlar limites
       if (finDeJuego) {
         window.cancelAnimationFrame(animationID);
+        self.audioLoose.play();
       }
       this.physics.update(clockDelta * 1000);
       this.physics.updateDebugger();
