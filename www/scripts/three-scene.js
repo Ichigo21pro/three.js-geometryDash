@@ -73,6 +73,10 @@ import tilesWallDesplazamiento16 from '../../assets/texture/wall/RoofShinglesOld
 import tilesWallMetalidad from '../../assets/texture/wall/RoofShinglesOld002_METALNESS_2K_METALNESS.png';
 import tilesWallNormal from '../../assets/texture/wall/RoofShinglesOld002_NRM_2K_METALNESS.png';
 import tilesWallRugosidad from '../../assets/texture/wall/RoofShinglesOld002_ROUGHNESS_2K_METALNESS.png';
+//lava
+import LavaTextura from '../../assets/texture/lava.png';
+//laser
+import LaserTextura from '../../assets/texture/laser.png';
 //cubemap
 import skyCubeMap from '../../assets/texture/cubemap/satara_night_1k.hdr';
 //cubemap
@@ -95,15 +99,6 @@ export default class ThreeScene {
       // Recorremos todos los materiales del modelo
       mundoUNO.traverse((child) => {
         if (child.isMesh) {
-          const wallTextureSombras = textureLoader.load(tilesWallSombras);
-          const wallTextureRelieve = textureLoader.load(tilesWallRelieve);
-          const wallTextureColor = textureLoader.load(tilesWallColor);
-          const wallTextureDesplazamiento = textureLoader.load(tilesWallDesplazamiento);
-          const wallTextureDespla16 = textureLoader.load(tilesWallDesplazamiento16);
-          const wallTextureMetalidad = textureLoader.load(tilesWallMetalidad);
-          const wallTextureNormal = textureLoader.load(tilesWallNormal);
-          const wallTextureRugosidad = textureLoader.load(tilesWallRugosidad);
-
           child.material = new THREE.MeshStandardMaterial({
             map: wallTextureColor, // Color map
             bumpMap: wallTextureRelieve, // Bump map
@@ -152,8 +147,17 @@ export default class ThreeScene {
       // Recorremos todos los materiales del modelo
       mundoDOS.traverse((child) => {
         if (child.isMesh) {
-          // Cambiamos el color del material
-          child.material.color.set(0xff0000); // Cambia a tu color deseado en formato hexadecimal
+          child.material = new THREE.MeshStandardMaterial({
+            map: wallTextureColor, // Color map
+            bumpMap: wallTextureRelieve, // Bump map
+            bumpScale: 0.2, // Ajusta el valor según sea necesario
+            normalMap: wallTextureNormal, // Normal map
+            metalnessMap: wallTextureMetalidad, // Metalness map
+            roughnessMap: wallTextureRugosidad, // Roughness map
+            aoMap: wallTextureSombras, // Ambient Occlusion map
+            displacementMap: wallTextureDespla16, // Displacement map
+            displacementScale: 0, // Ajusta el valor según sea necesario
+          });
         }
       });
       mundoDOS.position.set(0.5, -20 - 500, -20);
@@ -187,8 +191,17 @@ export default class ThreeScene {
       // Recorremos todos los materiales del modelo
       mundoTRES.traverse((child) => {
         if (child.isMesh) {
-          // Cambiamos el color del material
-          child.material.color.set(0xff0000); // Cambia a tu color deseado en formato hexadecimal
+          child.material = new THREE.MeshStandardMaterial({
+            map: wallTextureColor, // Color map
+            bumpMap: wallTextureRelieve, // Bump map
+            bumpScale: 0.2, // Ajusta el valor según sea necesario
+            normalMap: wallTextureNormal, // Normal map
+            metalnessMap: wallTextureMetalidad, // Metalness map
+            roughnessMap: wallTextureRugosidad, // Roughness map
+            aoMap: wallTextureSombras, // Ambient Occlusion map
+            displacementMap: wallTextureDespla16, // Displacement map
+            displacementScale: 0, // Ajusta el valor según sea necesario
+          });
         }
       });
       mundoTRES.position.set(0.5, -20 - 500, -20);
@@ -255,16 +268,22 @@ export default class ThreeScene {
     light.position.set(50, 200, 100);
     light.position.multiplyScalar(1.3);
     this.scene.add(light);
-
+    // FPS
+    var stats = new Stats();
+    stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
     //url
     const urlParams = new URLSearchParams(window.location.search);
     const debug = urlParams.get('debug');
+    const fps = urlParams.get('fps');
 
     // physics
     this.physics = new AmmoPhysics(this.scene);
     // Habilitar el modo debug si el parámetro 'debug' es igual a 'true'
     if (debug === 'true') {
       this.physics.debug?.enable();
+    }
+    if (fps === 'true') {
+      document.body.appendChild(stats.dom);
     }
 
     /////////////////TEXTURE//////////////
@@ -427,6 +446,20 @@ export default class ThreeScene {
       this.scene.background = texture;
       this.scene.environment = texture;
     });
+    ////////////////////////////////
+    //texture level
+    const wallTextureSombras = textureLoader.load(tilesWallSombras);
+    const wallTextureRelieve = textureLoader.load(tilesWallRelieve);
+    const wallTextureColor = textureLoader.load(tilesWallColor);
+    const wallTextureDesplazamiento = textureLoader.load(tilesWallDesplazamiento);
+    const wallTextureDespla16 = textureLoader.load(tilesWallDesplazamiento16);
+    const wallTextureMetalidad = textureLoader.load(tilesWallMetalidad);
+    const wallTextureNormal = textureLoader.load(tilesWallNormal);
+    const wallTextureRugosidad = textureLoader.load(tilesWallRugosidad);
+    //lava texture
+    const LavaTexturaApply = textureLoader.load(LavaTextura);
+    //laser
+    const LaserTexturaApply = textureLoader.load(LaserTextura);
 
     ///////////////////////////////
     //"../../assets/jump.mp3"
@@ -476,6 +509,8 @@ export default class ThreeScene {
     //textura ground
     grounBlock.material = new THREE.MeshStandardMaterial({
       map: goldTexture, // Mapa de color
+      metalness: 0.7,
+      roughness: 0.3,
     });
 
     //limits
@@ -491,6 +526,11 @@ export default class ThreeScene {
       { standard: { color: 0xf2a0e2 } }
     );
     backLimmits.body.setCollisionFlags(4); // Establecer como un "fantasma" // Evitar colisiones
+    backLimmits.material = new THREE.MeshStandardMaterial({
+      map: LaserTexturaApply, // Mapa de color
+    });
+
+    //
     var bottomLimmits = this.physics.add.ground(
       {
         x: 0.05,
@@ -502,6 +542,15 @@ export default class ThreeScene {
       },
       { standard: { color: 0xf2a0e2 } }
     );
+    LavaTexturaApply.repeat.x = 0.2;
+    //LavaTexturaApply.repeat.y = 1;
+    //texture.wrapS = THREE.RepeatWrapping;
+    //texture.wrapT = THREE.RepeatWrapping;
+    //texture.wrapY = THREE.RepeatWrapping;
+    bottomLimmits.material = new THREE.MeshStandardMaterial({
+      map: LavaTexturaApply, // Mapa de color
+    });
+
     var finnishLimit = this.physics.add.box(
       {
         x: 0.05,
@@ -585,10 +634,16 @@ export default class ThreeScene {
             jumpParticles.emitter.position.set(this.player.position.x, this.player.position.y, this.player.position.z); // Posición particulas
 
             // Disparar el sistema de partículas
-            jumpParticles.restart();
+            setTimeout(function () {
+              jumpParticles.restart();
+            }, 10);
+
             //
+
             self.audio.setLoop(false);
-            self.audio.play();
+            if (!self.audio.isPlaying) {
+              self.audio.play();
+            }
             tocandoSuelo = false;
             setTimeout(function () {
               self.audio.stop();
@@ -600,9 +655,7 @@ export default class ThreeScene {
     });
 
     //control de coliciones :
-    //suelo
-
-    //groupBlock
+    //
 
     //limites
     this.player.body.on.collision((collidedObject, event) => {
@@ -688,28 +741,28 @@ export default class ThreeScene {
 
         // Remover el mundoDos de la escena
         this.scene.remove(mundoDOS);
-        this.scene.remove(finnishLimit1);
+        this.scene.remove(this.finnishLimit1);
         //this.physics.destroy(mundoDOS);
 
         // Liberar memoria eliminando todas las referencias al mundoDos
         mundoDOS = null;
-        finnishLimit1 = null;
+        this.finnishLimit1 = null;
 
         mundoDOSTerminado = true;
       }
 
       if (collidedObject === grounBlock) {
-        this.resetTocandoSuelo();
+        tocandoSuelo = true;
       }
 
       if (collidedObject === mundoUNO) {
-        this.resetTocandoSuelo();
+        tocandoSuelo = true;
       }
       if (collidedObject === mundoDOS) {
-        this.resetTocandoSuelo();
+        tocandoSuelo = true;
       }
       if (collidedObject === mundoTRES) {
-        this.resetTocandoSuelo();
+        tocandoSuelo = true;
       }
 
       for (let i = 0; i < monedas.length; i++) {
@@ -761,10 +814,6 @@ export default class ThreeScene {
   });*/
 
     /////////////////////////////////////
-    // FPS
-    var stats = new Stats();
-    stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-    document.body.appendChild(stats.dom);
 
     /////////////////////////////////////
 
@@ -821,7 +870,7 @@ export default class ThreeScene {
             coin.body.needUpdate = true;
           });
 
-          this.finnishLimit1.body.setVelocityZ(1.7); // Avanzar
+          this.finnishLimit1.body.setVelocityZ(4.5); // Avanzar
           this.finnishLimit1.body.setVelocityY(0.4); // No permitir que caiga por la gravedad
           // Asegúrate de ajustar la lógica según sea necesario para mundoDOS
         }
@@ -833,7 +882,7 @@ export default class ThreeScene {
             coin.body.needUpdate = true;
           });
 
-          this.finnishLimit2.body.setVelocityZ(1.7); // Avanzar
+          this.finnishLimit2.body.setVelocityZ(4.5); // Avanzar
           this.finnishLimit2.body.setVelocityY(0.3); // No permitir que caiga por la gravedad
           // Asegúrate de ajustar la lógica según sea necesario para mundoTRES
         }
