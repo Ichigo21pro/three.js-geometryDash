@@ -1,6 +1,7 @@
 // three.js
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader';
 // Importa la clase Audio de Three.js
 
 // physics
@@ -72,6 +73,9 @@ import tilesWallDesplazamiento16 from '../../assets/texture/wall/RoofShinglesOld
 import tilesWallMetalidad from '../../assets/texture/wall/RoofShinglesOld002_METALNESS_2K_METALNESS.png';
 import tilesWallNormal from '../../assets/texture/wall/RoofShinglesOld002_NRM_2K_METALNESS.png';
 import tilesWallRugosidad from '../../assets/texture/wall/RoofShinglesOld002_ROUGHNESS_2K_METALNESS.png';
+//cubemap
+import skyCubeMap from '../../assets/texture/cubemap/satara_night_1k.hdr';
+//cubemap
 
 ///////////////
 
@@ -250,6 +254,7 @@ export default class ThreeScene {
     const light = new THREE.DirectionalLight(0xdfebff, 1);
     light.position.set(50, 200, 100);
     light.position.multiplyScalar(1.3);
+    this.scene.add(light);
 
     //url
     const urlParams = new URLSearchParams(window.location.search);
@@ -410,7 +415,19 @@ export default class ThreeScene {
     jumpParticles.emitter.position.set(this.player.position.x, this.player.position.y, this.player.position.z); // Posición particulas
     jumpParticles.emitter.rotation.set(0, Math.PI * 0.5, 0); // Rotación particulas para que miren a la cámara
 
-    ///////////////////
+    ////////////////////////////////
+    //añadir cubeMap
+    const rgbeLoader = new RGBELoader();
+
+    rgbeLoader.load(skyCubeMap, (texture) => {
+      texture.mapping = THREE.EquirectangularReflectionMapping;
+      texture.minFilter = THREE.LinearFilter; // Filtro para suavizar cuando se escala hacia abajo
+      texture.magFilter = THREE.LinearFilter; // Filtro para suavizar cuando se escala hacia arriba
+      texture.generateMipmaps = true; // Genera mipmaps para un mejor rendimiento
+      this.scene.background = texture;
+      this.scene.environment = texture;
+    });
+
     ///////////////////////////////
     //"../../assets/jump.mp3"
 
