@@ -703,7 +703,7 @@ export default class ThreeScene {
           self.audioCoin.play();
 
           setTimeout(function () {
-            self.audioCoinr.stop();
+            self.audioCoin.stop();
           }, 300);
           //
           console.log('Colisión con moneda detectada');
