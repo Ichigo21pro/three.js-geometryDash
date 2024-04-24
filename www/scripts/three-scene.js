@@ -699,17 +699,17 @@ export default class ThreeScene {
       }
 
       if (collidedObject === grounBlock) {
-        tocandoSuelo = true;
+        this.resetTocandoSuelo();
       }
 
       if (collidedObject === mundoUNO) {
-        tocandoSuelo = true;
+        this.resetTocandoSuelo();
       }
       if (collidedObject === mundoDOS) {
-        tocandoSuelo = true;
+        this.resetTocandoSuelo();
       }
       if (collidedObject === mundoTRES) {
-        tocandoSuelo = true;
+        this.resetTocandoSuelo();
       }
 
       for (let i = 0; i < monedas.length; i++) {
