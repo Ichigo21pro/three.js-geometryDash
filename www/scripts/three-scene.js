@@ -1,21 +1,17 @@
 // three.js
-import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // Importa la clase Audio de Three.js
 
 // physics
-import {
-  AmmoPhysics,
-  ExtendedMesh,
-  PhysicsLoader,
-} from "@enable3d/ammo-physics";
-import * as Ammo from "../ammo/ammo.js";
+import { AmmoPhysics, ExtendedMesh, PhysicsLoader } from '@enable3d/ammo-physics';
+import * as Ammo from '../ammo/ammo.js';
 
 // CSG
-import { CSG } from "@enable3d/three-graphics/jsm/csg";
+import { CSG } from '@enable3d/three-graphics/jsm/csg';
 
 // Flat
-import { TextTexture, TextSprite } from "@enable3d/three-graphics/jsm/flat";
+import { TextTexture, TextSprite } from '@enable3d/three-graphics/jsm/flat';
 //bloques del nivel intanciar variable
 let groupBlock;
 //control limites
@@ -41,40 +37,29 @@ var mundoUNOTerminado = false;
 var mundoDOSTerminado = false;
 
 //modelos 3D
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import level_1_model from "../../assets/Level1.gltf";
-import level_2_model from "../../assets/Level2.gltf";
-import level_3_model from "../../assets/Level3.gltf";
-import coinMoney from "../../assets/coin.gltf";
-import Stats from "stats.js";
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import level_1_model from '../../assets/Level1.gltf';
+import level_2_model from '../../assets/Level2.gltf';
+import level_3_model from '../../assets/Level3.gltf';
+import coinMoney from '../../assets/coin.gltf';
+import Stats from 'stats.js';
 //particulas
-import { BatchedRenderer, ParticleSystem } from "three.quarks";
-import {
-  PointEmitter,
-  IntervalValue,
-  ConstantValue,
-  ConstantColor,
-  SizeOverLife,
-  FrameOverLife,
-  PiecewiseBezier,
-  ColorOverLife,
-  Bezier,
-  AdditiveBlending,
-  RenderMode,
-  TextureLoader,
-} from "three.quarks";
+import { BatchedRenderer, ParticleSystem } from 'three.quarks';
+import { PointEmitter, IntervalValue, ConstantValue, ConstantColor, SizeOverLife, FrameOverLife, PiecewiseBezier, ColorOverLife, Bezier, AdditiveBlending, RenderMode, TextureLoader } from 'three.quarks';
 
 // Audio
-import jumpSound from "../../assets/jump.mp3";
+import jumpSound from '../../assets/jump.mp3';
 // PArticles
-import jumpParticle from "../../assets/particle.png";
-//texture
-import tilesBaseDIFFI from "../../assets/texture/rock/Rock_04_DIFF.png";
-import tilesBaseDISPI from "../../assets/texture/rock/Rock_04_DISP.png";
-import tilesBaseNRMI from "../../assets/texture/rock/Rock_04_NRM.png";
-import tilesBaseOCCI from "../../assets/texture/rock/Rock_04_OCC.png";
-import tilesBaseSPECI from "../../assets/texture/rock/Rock_04_SPEC.png";
-
+import jumpParticle from '../../assets/particle.png';
+//texture//
+//rock
+import tilesBaseDIFFI from '../../assets/texture/rock/Rock_04_DIFF.png';
+import tilesBaseDISPI from '../../assets/texture/rock/Rock_04_DISP.png';
+import tilesBaseNRMI from '../../assets/texture/rock/Rock_04_NRM.png';
+import tilesBaseOCCI from '../../assets/texture/rock/Rock_04_OCC.png';
+import tilesBaseSPECI from '../../assets/texture/rock/Rock_04_SPEC.png';
+//gold
+import tilesBaseGOLD from '../../assets/texture/gold/MetalGoldPaint002_COL_2K_METALNESS.png';
 ///////////////
 
 export default class ThreeScene {
@@ -99,7 +84,7 @@ export default class ThreeScene {
       mundoUNO.rotation.set(0, Math.PI * 0.5, 0);
       this.scene.add(mundoUNO);
       this.physics.add.existing(mundoUNO, {
-        shape: "concaveMesh",
+        shape: 'concaveMesh',
         addChildren: true,
         collisionFlags: 2,
       });
@@ -137,7 +122,7 @@ export default class ThreeScene {
       mundoDOS.rotation.set(0, Math.PI * 0.5, 0);
       this.scene.add(mundoDOS);
       this.physics.add.existing(mundoDOS, {
-        shape: "concaveMesh",
+        shape: 'concaveMesh',
         addChildren: true,
         collisionFlags: 2,
       });
@@ -172,7 +157,7 @@ export default class ThreeScene {
       mundoTRES.rotation.set(0, Math.PI * 0.5, 0);
       this.scene.add(mundoTRES);
       this.physics.add.existing(mundoTRES, {
-        shape: "concaveMesh",
+        shape: 'concaveMesh',
         addChildren: true,
         collisionFlags: 2,
       });
@@ -233,34 +218,32 @@ export default class ThreeScene {
 
     //url
     const urlParams = new URLSearchParams(window.location.search);
-    const debug = urlParams.get("debug");
+    const debug = urlParams.get('debug');
 
     // physics
     this.physics = new AmmoPhysics(this.scene);
     // Habilitar el modo debug si el parámetro 'debug' es igual a 'true'
-    if (debug === "true") {
+    if (debug === 'true') {
       this.physics.debug?.enable();
     }
 
     /////////////////TEXTURE//////////////
-
+    //rock
     const textureLoader = new THREE.TextureLoader();
     const tilesBaseDIFF = textureLoader.load(tilesBaseDIFFI);
     const tilesBaseDISP = textureLoader.load(tilesBaseDISPI);
     const tilesBaseNRM = textureLoader.load(tilesBaseNRMI);
     const tilesBaseOCC = textureLoader.load(tilesBaseOCCI);
     const tilesBaseSPEC = textureLoader.load(tilesBaseSPECI);
-
+    //gold
+    const goldTexture = textureLoader.load(tilesBaseGOLD);
     ////////////////
 
     // extract the object factory from physics
     // the factory will make/add object without physics
     const { factory } = this.physics;
     // blue box
-    this.player = this.physics.add.box(
-      { x: 0.05, y: 1, z: 98, width: 1, height: 1 },
-      { lambert: { color: 0x2194ce } }
-    );
+    this.player = this.physics.add.box({ x: 0.05, y: 1, z: 98, width: 1, height: 1 }, { lambert: { color: 0x2194ce } });
     //camera target position
     orbitControls.target = this.player.position;
     //console.log(this.player);
@@ -388,11 +371,7 @@ export default class ThreeScene {
 
     // Ajustar la posición del emisor para simular el origen del salto
     //jumpParticles.emitter.position.set(0, 0, 0); // Posición del emisor (cambiar según la escena)
-    jumpParticles.emitter.position.set(
-      this.player.position.x,
-      this.player.position.y,
-      this.player.position.z
-    ); // Posición particulas
+    jumpParticles.emitter.position.set(this.player.position.x, this.player.position.y, this.player.position.z); // Posición particulas
     jumpParticles.emitter.rotation.set(0, Math.PI * 0.5, 0); // Rotación particulas para que miren a la cámara
 
     ///////////////////
@@ -414,7 +393,13 @@ export default class ThreeScene {
     });
     ///////////////////////////////
     // static ground
+
     var grounBlock = this.physics.add.ground({ width: 1, height: 220 });
+    //textura ground
+    grounBlock.material = new THREE.MeshStandardMaterial({
+      map: goldTexture, // Mapa de color
+    });
+
     //limits
     var backLimmits = this.physics.add.ground(
       {
@@ -466,18 +451,15 @@ export default class ThreeScene {
     camera2d.position.setZ(10);
 
     // add 2d text in UI
-    const text = new TextTexture("Score : " + contadorMonedas, {
-      fontWeight: "bold",
+    const text = new TextTexture('Score : ' + contadorMonedas, {
+      fontWeight: 'bold',
       fontSize: 48,
     });
     const sprite = new TextSprite(text);
     const scale = 0.5;
 
     sprite.setScale(scale);
-    sprite.setPosition(
-      0 + (text.width * scale) / 2 + 12,
-      height - (text.height * scale) / 2 - 12
-    );
+    sprite.setPosition(0 + (text.width * scale) / 2 + 12, height - (text.height * scale) / 2 - 12);
     scene2d.add(sprite);
 
     // clock
@@ -494,7 +476,7 @@ export default class ThreeScene {
     };
 
     //atrapamos las teclas
-    window.addEventListener("keydown", (event) => {
+    window.addEventListener('keydown', (event) => {
       switch (event.code) {
         /*case "KeyA":
         keys.a.pressed = true;
@@ -508,25 +490,21 @@ export default class ThreeScene {
         keys.w.pressed = true;
 
         break;*/
-        case "KeyR":
+        case 'KeyR':
           keys.r.pressed = true;
 
           finDeJuego = false;
           window.location.reload(); // Recargar la página
 
           break;
-        case "Space":
+        case 'Space':
           // Realiza el salto.
           if (tocandoSuelo) {
             this.player.body.setVelocityY(5.5);
             //this.createParticles();
             // Ajustar la posición del emisor para simular el origen del salto
 
-            jumpParticles.emitter.position.set(
-              this.player.position.x,
-              this.player.position.y,
-              this.player.position.z
-            ); // Posición particulas
+            jumpParticles.emitter.position.set(this.player.position.x, this.player.position.y, this.player.position.z); // Posición particulas
 
             // Disparar el sistema de partículas
             jumpParticles.restart();
@@ -552,13 +530,10 @@ export default class ThreeScene {
     this.player.body.on.collision((collidedObject, event) => {
       if (collidedObject === bottomLimmits) {
         // Mostrar mensaje en el centro de la cámara
-        const gameOverText = new TextTexture(
-          "Fin del juego. Presiona R para reiniciar",
-          {
-            fontWeight: "bold",
-            fontSize: 48,
-          }
-        );
+        const gameOverText = new TextTexture('Fin del juego. Presiona R para reiniciar', {
+          fontWeight: 'bold',
+          fontSize: 48,
+        });
         const gameOverSprite = new TextSprite(gameOverText);
         gameOverSprite.setPosition(width / 2, height / 2);
         scene2d.add(gameOverSprite);
@@ -568,13 +543,10 @@ export default class ThreeScene {
         return;
       } else if (collidedObject === backLimmits) {
         // Mostrar mensaje en el centro de la cámara
-        const gameOverText = new TextTexture(
-          "Fin del juego. Presiona R para reiniciar",
-          {
-            fontWeight: "bold",
-            fontSize: 48,
-          }
-        );
+        const gameOverText = new TextTexture('Fin del juego. Presiona R para reiniciar', {
+          fontWeight: 'bold',
+          fontSize: 48,
+        });
         const gameOverSprite = new TextSprite(gameOverText);
         gameOverSprite.setPosition(width / 2, height / 2);
         scene2d.add(gameOverSprite);
@@ -654,7 +626,7 @@ export default class ThreeScene {
       for (let i = 0; i < monedas.length; i++) {
         // console.log(monedas[i]);
         if (collidedObject === monedas[i]) {
-          console.log("Colisión con moneda detectada");
+          console.log('Colisión con moneda detectada');
           // Eliminar la moneda de la escena y del array
           monedas[i].position.y = -10;
           monedas[i].body.needUpdate = true;
@@ -662,8 +634,8 @@ export default class ThreeScene {
 
           // Incrementar el contador de monedas recolectadas u realizar otras acciones
           contadorMonedas += 10;
-          sprite.setText("Score : " + contadorMonedas);
-          console.log("contadorMonedas:", contadorMonedas);
+          sprite.setText('Score : ' + contadorMonedas);
+          console.log('contadorMonedas:', contadorMonedas);
           // Salir del bucle ya que hemos encontrado la moneda colisionada
           break;
         }
@@ -806,7 +778,7 @@ export default class ThreeScene {
       coin.rotation.set(0, Math.PI * 0.5, 0);
       this.scene.add(coin);
       this.physics.add.existing(coin, {
-        shape: "concaveMesh",
+        shape: 'concaveMesh',
         addChildren: true,
         collisionFlags: 2,
       });
