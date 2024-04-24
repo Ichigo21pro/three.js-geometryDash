@@ -51,6 +51,7 @@ import { PointEmitter, IntervalValue, ConstantValue, ConstantColor, SizeOverLife
 import jumpSound from '../../assets/jump.mp3';
 import coinSound from '../../assets/coin.mp3';
 import looseSound from '../../assets/loose.mp3';
+import winSound from '../../assets/win.mp3';
 // PArticles
 import jumpParticle from '../../assets/particle.png';
 //texture//
@@ -62,6 +63,16 @@ import tilesBaseOCCI from '../../assets/texture/rock/Rock_04_OCC.png';
 import tilesBaseSPECI from '../../assets/texture/rock/Rock_04_SPEC.png';
 //gold
 import tilesBaseGOLD from '../../assets/texture/gold/MetalGoldPaint002_COL_2K_METALNESS.png';
+//wall
+import tilesWallSombras from '../../assets/texture/wall/RoofShinglesOld002_AO_2K_METALNESS.png';
+import tilesWallRelieve from '../../assets/texture/wall/RoofShinglesOld002_BUMP_2K_METALNESS.png';
+import tilesWallColor from '../../assets/texture/wall/RoofShinglesOld002_COL_2K_METALNESS.png';
+import tilesWallDesplazamiento from '../../assets/texture/wall/RoofShinglesOld002_DISP_2K_METALNESS.png';
+import tilesWallDesplazamiento16 from '../../assets/texture/wall/RoofShinglesOld002_DISP16_2K_METALNESS.png';
+import tilesWallMetalidad from '../../assets/texture/wall/RoofShinglesOld002_METALNESS_2K_METALNESS.png';
+import tilesWallNormal from '../../assets/texture/wall/RoofShinglesOld002_NRM_2K_METALNESS.png';
+import tilesWallRugosidad from '../../assets/texture/wall/RoofShinglesOld002_ROUGHNESS_2K_METALNESS.png';
+
 ///////////////
 
 export default class ThreeScene {
@@ -73,12 +84,33 @@ export default class ThreeScene {
     // Cargar modelo 3D del nivel
     this.GLTFLoader.load(level_1_model, (gltf) => {
       mundoUNO = gltf.scene;
-      // Color
+      // Texture
+      // Crear un nuevo material con las texturas aplicadas    //wall
+      /* */
+
       // Recorremos todos los materiales del modelo
       mundoUNO.traverse((child) => {
         if (child.isMesh) {
-          // Cambiamos el color del material
-          child.material.color.set(0xff0000); // Cambia a tu color deseado en formato hexadecimal
+          const wallTextureSombras = textureLoader.load(tilesWallSombras);
+          const wallTextureRelieve = textureLoader.load(tilesWallRelieve);
+          const wallTextureColor = textureLoader.load(tilesWallColor);
+          const wallTextureDesplazamiento = textureLoader.load(tilesWallDesplazamiento);
+          const wallTextureDespla16 = textureLoader.load(tilesWallDesplazamiento16);
+          const wallTextureMetalidad = textureLoader.load(tilesWallMetalidad);
+          const wallTextureNormal = textureLoader.load(tilesWallNormal);
+          const wallTextureRugosidad = textureLoader.load(tilesWallRugosidad);
+
+          child.material = new THREE.MeshStandardMaterial({
+            map: wallTextureColor, // Color map
+            bumpMap: wallTextureRelieve, // Bump map
+            bumpScale: 0.2, // Ajusta el valor según sea necesario
+            normalMap: wallTextureNormal, // Normal map
+            metalnessMap: wallTextureMetalidad, // Metalness map
+            roughnessMap: wallTextureRugosidad, // Roughness map
+            aoMap: wallTextureSombras, // Ambient Occlusion map
+            displacementMap: wallTextureDespla16, // Displacement map
+            displacementScale: 0, // Ajusta el valor según sea necesario
+          });
         }
       });
       mundoUNO.position.set(0.5, -1.2, -20);
@@ -90,6 +122,7 @@ export default class ThreeScene {
         addChildren: true,
         collisionFlags: 2,
       });
+
       // Llamar a la función createCoin con diferentes posiciones para crear múltiples monedas en el nivel
       this.createCoin(0, 5, 62, mundoUNO);
       this.createCoin(0, 3, 50.5, mundoUNO);
@@ -239,6 +272,7 @@ export default class ThreeScene {
     const tilesBaseSPEC = textureLoader.load(tilesBaseSPECI);
     //gold
     const goldTexture = textureLoader.load(tilesBaseGOLD);
+
     ////////////////
 
     // extract the object factory from physics
@@ -387,14 +421,21 @@ export default class ThreeScene {
     var audioLoader = new THREE.AudioLoader();
     var self = this; // Guarda una referencia al contexto actual
 
-    //
+    //loose
     audioLoader.load(looseSound, function (buffer) {
       self.audioLoose = new THREE.Audio(listener); // Crea el objeto audio aquí
       self.audioLoose.setBuffer(buffer);
       self.audioLoose.setLoop(false);
       self.audioLoose.setVolume(0.5);
     });
-    //
+    //win
+    audioLoader.load(winSound, function (buffer) {
+      self.audioWin = new THREE.Audio(listener); // Crea el objeto audio aquí
+      self.audioWin.setBuffer(buffer);
+      self.audioWin.setLoop(false);
+      self.audioWin.setVolume(0.5);
+    });
+    //jump
 
     audioLoader.load(jumpSound, function (buffer) {
       self.audio = new THREE.Audio(listener); // Crea el objeto audio aquí
@@ -571,6 +612,17 @@ export default class ThreeScene {
         gameOverSprite.setPosition(width / 2, height / 2);
         scene2d.add(gameOverSprite);
         finDeJuego = true;
+      } else if (collidedObject === this.finnishLimit2) {
+        // Mostrar mensaje en el centro de la cámara
+        const gameOverText = new TextTexture('Fin del juego HAS GANADO. Presiona R para reiniciar', {
+          fontWeight: 'bold',
+          fontSize: 48,
+        });
+        const gameOverSprite = new TextSprite(gameOverText);
+        gameOverSprite.setPosition(width / 2, height / 2);
+        scene2d.add(gameOverSprite);
+        self.winSound.play();
+        finDeJuego = true;
       } else if (collidedObject === finnishLimit && !mundoUNOTerminado) {
         nivel = 1;
 
@@ -619,12 +671,12 @@ export default class ThreeScene {
 
         // Remover el mundoDos de la escena
         this.scene.remove(mundoDOS);
-        this.scene.remove(finnishLimit2);
+        this.scene.remove(finnishLimit1);
         //this.physics.destroy(mundoDOS);
 
         // Liberar memoria eliminando todas las referencias al mundoDos
         mundoDOS = null;
-        finnishLimit2 = null;
+        finnishLimit1 = null;
 
         mundoDOSTerminado = true;
       }
