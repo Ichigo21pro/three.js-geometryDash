@@ -13,3 +13,7 @@ use :
 npm install
 npm start
 
+you can play here:
+https://three-js-geometry-dash.vercel.app/
+
+
